@@ -1,0 +1,146 @@
+@import "react-toastify/dist/ReactToastify.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+	:root {
+		--background: 0 0% 100%;
+		--foreground: 240 10% 3.9%;
+		--card: 0 0% 100%;
+		--card-foreground: 240 10% 3.9%;
+		--popover: 0 0% 100%;
+		--popover-foreground: 240 10% 3.9%;
+		--primary: 240 5.9% 10%;
+		/* --primary: 199, 89%, 48%; */
+		--primary-foreground: 0 0% 98%;
+		/* --primary-foreground: 240 10% 3.9%; */
+		--secondary: 240 4.8% 95.9%;
+		--secondary-foreground: 240 5.9% 10%;
+		--muted: 240 4.8% 95.9%;
+		--muted-foreground: 240 3.8% 46.1%;
+		--accent: 240 4.8% 95.9%;
+		--accent-foreground: 240 5.9% 10%;
+		--success: 142, 76%, 36%;
+		--success-foreground: var(--card);
+		--destructive: 0 84.2% 60.2%;
+		--destructive-foreground: 0 0% 98%;
+		--border: 240 5.9% 90%;
+		--input: 240 5.9% 90%;
+		--ring: 240 5.9% 10%;
+		--radius: 0.5rem;
+	}
+
+	.dark {
+		--background: 240 10% 3.9%;
+		--foreground: 0 0% 98%;
+		--card: 240 10% 3.9%;
+		--card-foreground: 0 0% 98%;
+		--popover: 240 10% 3.9%;
+		--popover-foreground: 0 0% 98%;
+		/* --primary: 0 0% 98%; */
+		--primary: 199, 89%, 48%;
+		--primary-foreground: 240 5.9% 10%;
+		--secondary: 240 3.7% 15.9%;
+		--secondary-foreground: 0 0% 98%;
+		--muted: 240 3.7% 15.9%;
+		--muted-foreground: 240 5% 64.9%;
+		--accent: 240 3.7% 15.9%;
+		--accent-foreground: 0 0% 98%;
+
+		--border: 240 3.7% 15.9%;
+		--input: 240 3.7% 15.9%;
+		--ring: 240 4.9% 83.9%;
+	}
+}
+
+@layer base {
+	* {
+		@apply border-border;
+	}
+	body {
+		@apply bg-background text-foreground overflow-x-hidden;
+	}
+}
+
+@layer components {
+	main .section {
+		@apply h-full block p-2 sm:p-4 md:scroll-pl-6;
+	}
+	main .section .section-heading {
+		@apply p-2 sm:p-4 rounded-lg shadow border bg-card text-card-foreground mb-4 sm:mb-8 flex-wrap gap-4 flex justify-between items-center;
+	}
+	main .section .section-content {
+		@apply p-1 sm:p-2 rounded-lg shadow border bg-card text-card-foreground mb-4 sm:mb-8;
+	}
+	main .section .section-heading .heading-text {
+		@apply text-xl sm:text-2xl md:text-3xl font-bold capitalize;
+	}
+	main .section .section-heading .heading-desc {
+		@apply text-sm pt-1 lg:pt-1.5 text-muted-foreground;
+	}
+	.table-wrapper {
+		@apply w-full block min-h-[100px] pb-2 shadow overflow-x-auto border rounded-md;
+	}
+	.table-wrapper table {
+		@apply w-full;
+	}
+	.link {
+		@apply text-sky-500 hover:text-sky-600;
+	}
+	.table,
+	.data-table {
+		@apply table-auto w-fit;
+	}
+	.table thead,
+	.data-table thead {
+		@apply text-[15px] border-b-2 h-[50px];
+	}
+
+	.table-wrapper table thead th {
+		@apply text-sm whitespace-nowrap;
+	}
+	.table-wrapper table tbody {
+		@apply text-xs;
+	}
+	.table-wrapper table tr {
+		@apply px-2;
+	}
+	.table-wrapper table tr td {
+		@apply md:min-w-fit;
+	}
+
+	.table th,
+	.table td,
+	.data-table th,
+	.data-table td {
+		@apply text-left py-[5px] px-[10px];
+	}
+
+	.data-table tbody td,
+	.data-table thead th {
+		@apply border;
+		/* color:#898585 */
+	}
+
+	.table tbody tr {
+		@apply border-b h-[40px];
+	}
+
+	.table-wrapper table tbody tr:last-child {
+		@apply border-b-0;
+	}
+
+	@media (max-width: 680) {
+		*:has(table) {
+			@apply overflow-x-auto w-full max-w-[680px];
+		}
+		main section.p-6 {
+			@apply p-2;
+		}
+	}
+	/* .table tbody tr:last-child {
+		@apply border-b-0;
+	} */
+}
