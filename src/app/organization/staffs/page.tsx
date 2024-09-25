@@ -1,4 +1,4 @@
-import { Check, Info } from "lucide-react";
+import { Check, Info, SearchIcon } from "lucide-react";
 import { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -11,6 +11,7 @@ import AddStaff from "./Components/AddStaff";
 import DisableStaff from "./Components/DisableStaff";
 import EnableStaff from "./Components/EnableStaff";
 import { generate_unique_id } from "@/lib/helpers/generator";
+import { Input } from "@/Components/ui/input";
 
 export const metadata: Metadata = {
   title: "Staffs | E-Procurement",
@@ -51,49 +52,22 @@ export default async function Page() {
       </div>
     );
   }
-  function staffByStatus(status: boolean) {
-    return staffs?.filter((staff) => !staff.disabled == status) || [];
-  }
 
-  const activeStaffs = staffByStatus(true);
-  const inactiveStaffs = staffByStatus(false);
   return (
     <section className="section">
       <div className="section-heading">
-        <div
-          className={
-            permissions.create
-              ? "grid"
-              : "flex items-center justify-between gap-4 flex-wrap"
-          }
-        >
-          <h1 className="text-xl sm:text-3xl font-bold">Staffs</h1>
-          <div className="grid">
-            {activeStaffs.length > 0 && (
-              <p className="text-muted-foreground inline-flex items-center gap-2 text-sm">
-                <span className="inline-flex items-center gap-4">
-                  <Check size={"16"} className="text-primary" />
-                  <span className="text-xs">
-                    <span className="font-bold">{activeStaffs.length}</span>{" "}
-                    Active {pluralize("Staff", activeStaffs.length)}
-                  </span>
-                </span>
-              </p>
-            )}
-            {inactiveStaffs.length > 0 && (
-              <p className="text-muted-foreground inline-flex items-center gap-2 text-sm">
-                <span className="inline-flex items-center gap-4">
-                  <Info size={"16"} className="text-destructive" />
-                  <span className="text-xs">
-                    <span className="font-bold">{inactiveStaffs.length}</span>{" "}
-                    <span className=" min-w-[20ch]">
-                      Disabled {pluralize("Staff", inactiveStaffs.length)}
-                    </span>
-                  </span>
-                </span>
-              </p>
-            )}
-          </div>
+        <div className="relative">
+          <Input
+            className="md:w-[300px] pr-4"
+            placeholder="Search by staff name or unit"
+          />
+          <Button
+            variant="secondary"
+            size={"icon"}
+            className="absolute right-0 top-1/2 -translate-y-1/2"
+          >
+            <SearchIcon className="h-4 w-4" />
+          </Button>
         </div>
         {permissions.create && (
           <div className="grid items-center">
@@ -177,7 +151,7 @@ export default async function Page() {
                               <Button
                                 size={"sm"}
                                 variant={"secondary"}
-                                className="font-semibold text-sm"
+                                className="text-sm"
                               >
                                 Update
                               </Button>
