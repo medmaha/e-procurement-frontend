@@ -178,13 +178,13 @@ const fields = [
     selector: DepartmentSelection,
     required: true,
   },
-  {
-    name: "unit_head",
-    label: "Unit Head",
-    help: "The staff that manages the unit",
-    type: "select",
-    selector: StaffsSelect,
-  },
+  // {
+  //   name: "unit_head",
+  //   label: "Unit Head",
+  //   help: "The staff that manages the unit",
+  //   type: "select",
+  //   selector: StaffsSelect,
+  // },
   {
     name: "phone",
     label: "Phone",

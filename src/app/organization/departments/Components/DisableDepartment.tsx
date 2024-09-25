@@ -51,7 +51,7 @@ export default function DisableDepartment({ department }: any) {
           size={"sm"}
           onClick={() => toggleOpen(true)}
         >
-          Enable
+          Disable
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-[600px] text-foreground">

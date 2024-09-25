@@ -155,13 +155,13 @@ const fields = [
     required: true,
     attr: { minLength: 3, maxLength: 50 },
   },
-  {
-    name: "department_head_id",
-    label: "Department Head",
-    help: "The staff that manages the department",
-    type: "select",
-    selector: StaffsSelect,
-  },
+  // {
+  //   name: "department_head_id",
+  //   label: "Department Head",
+  //   help: "The staff that manages the department",
+  //   type: "select",
+  //   selector: StaffsSelect,
+  // },
   {
     name: "phone",
     label: "Phone",

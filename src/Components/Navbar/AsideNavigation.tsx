@@ -153,22 +153,24 @@ function NavContent({ user, children, closeNav }: any) {
           <Accordions user={user} closeNav={closeNav} />
         </div>
       </section>
-      <footer className="p-4 border-r sm:px-6 bg-accent text-accent-foreground">
-        <div className="flex justify-center gap-6 flex-wrap items-center">
-          <p className="text-xs text-muted-foreground">
-            &copy;{" "}
-            <a
-              href={user.meta?.vendor?.website || APP_COMPANY.website}
-              target="blank"
-              className="font-semibold underline underline-offset-4 tracking-wide"
-            >
-              {user.meta?.vendor?.id
-                ? user.meta?.vendor?.name
-                : APP_COMPANY.name}
-            </a>
-          </p>
-        </div>
-      </footer>
+      {user.meta.vendor && (
+        <footer className="p-4 border-r sm:px-6 bg-accent text-accent-foreground">
+          <div className="flex justify-center gap-6 flex-wrap items-center">
+            <p className="text-xs text-muted-foreground">
+              &copy;{" "}
+              <a
+                href={user.meta?.vendor?.website || APP_COMPANY.website}
+                target="blank"
+                className="font-semibold underline underline-offset-4 tracking-wide"
+              >
+                {user.meta?.vendor?.id
+                  ? user.meta?.vendor?.name
+                  : APP_COMPANY.name}
+              </a>
+            </p>
+          </div>
+        </footer>
+      )}
     </>
   );
 }
@@ -248,11 +250,8 @@ export function Accordions({ user, closeNav }: any) {
             <AccordionContent className="pt-0 mt-0 ml-4">
               {accordion.items.map((item) => {
                 return (
-                  <ul
-                    key={item.name}
-                    className="flex flex-col space-y-1 w-full"
-                  >
-                    <li className="inline-block mt-2 w-full">
+                  <ul key={item.name} className="flex flex-col w-full">
+                    <li className="inline-block mt-1 w-full">
                       <Link
                         onClick={(ev) => {
                           const target = ev.target as HTMLElement;

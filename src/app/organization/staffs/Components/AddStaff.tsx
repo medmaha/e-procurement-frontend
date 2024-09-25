@@ -33,8 +33,6 @@ import SubmitButton from "@/Components/widget/SubmitButton";
 import UnitsSelect from "@/Components/widget/UnitsSelect";
 import { createStaff, retrieveUpdateStaff, updateStaff } from "../actions";
 
-const CACHE = new Map();
-
 type Props = {
   text?: string;
   staff?: undefined | Staff;
@@ -51,13 +49,9 @@ export default function AddStaff(props: Props) {
 
   const fetchStaff = useCallback(async () => {
     if (props.staff) {
-      if (CACHE.get("staff_" + props.staff?.id)) {
-        return setStaff(CACHE.get("staff_" + props.staff.id));
-      }
       const response = await retrieveUpdateStaff(String(props.staff.id));
       if (response.success) {
         const data = { ...props.staff, ...response.data };
-        CACHE.set("staff_" + props.staff.id, data);
         setStaff(data);
       }
     }
@@ -120,10 +114,8 @@ function Form({ closeDialog, staff, user, open, isAdmin }: Props2) {
       location.pathname
     );
     if (success) {
-      CACHE.delete("staff_" + staff?.id);
       toast.success(message);
       closeDialog();
-
       return;
     }
     toast.error(message);

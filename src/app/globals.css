@@ -5,6 +5,9 @@
 @tailwind utilities;
 
 @layer base {
+  .a {
+    color: hsl(0, 0%, 96%);
+  }
   :root {
     --background: 0 0% 100%;
     --foreground: 240 10% 3.9%;
