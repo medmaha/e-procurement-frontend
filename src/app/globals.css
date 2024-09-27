@@ -150,4 +150,8 @@
   /* .table tbody tr:last-child {
 		@apply border-b-0;
 	} */
+
+  .react-select__control {
+    @apply !bg-secondary;
+  }
 }
