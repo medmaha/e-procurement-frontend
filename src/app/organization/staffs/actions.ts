@@ -14,11 +14,12 @@ function transformStringToList(string: string, delimiter = ",") {
 export async function createStaff(json: any, pathname?: string) {
   const groups = String(json.group_ids) || "";
   json["group_ids"] = transformStringToList(groups);
+
   const response = await actionRequest({
     pathname,
     data: json,
     method: "post",
-    url: "/organization/staffs/create/",
+    url: "/organization/staffs/creates/a",
   });
   return response;
 }

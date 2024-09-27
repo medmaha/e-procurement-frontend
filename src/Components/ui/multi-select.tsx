@@ -54,10 +54,26 @@ type Props = {
 export default function MultipleSelectBox(props: Props) {
   const [open, setOpen] = React.useState(false);
   const [selectedItems, setSelectedItems] = React.useState<SelectItem[]>([]);
+  const [options, setOptions] = React.useState(props.options);
+
+  const removeSelectedOptionsFromList = React.useCallback(
+    (selectedOptions: SelectItem[], options: SelectItem[]) => {
+      return options.filter(
+        (option) =>
+          !selectedOptions.some(
+            (selectedOption) => selectedOption.value === option.value
+          )
+      );
+    },
+    []
+  );
 
   React.useEffect(() => {
     setSelectedItems(props.defaultValues || []);
-  }, [props.defaultValues]);
+    setOptions(
+      removeSelectedOptionsFromList(props.defaultValues || [], props.options)
+    );
+  }, [props.defaultValues, props.options, removeSelectedOptionsFromList]);
 
   const handleSelect = (item: SelectItem) => {
     setSelectedItems((current) => {
@@ -68,11 +84,13 @@ export default function MultipleSelectBox(props: Props) {
         const values = current.filter(
           (selected) => selected.value !== item.value
         );
+        setOptions(removeSelectedOptionsFromList(values, props.options));
         props.onValueChange?.(values);
         return values;
       } else {
         const values = [...current, item];
         props.onValueChange?.(values);
+        setOptions(removeSelectedOptionsFromList(values, props.options));
         return values;
       }
     });
@@ -98,14 +116,24 @@ export default function MultipleSelectBox(props: Props) {
                   <span className="text-xs inline-block mr-1 group-hover:border-primary border-r border-secondary pr-2">
                     {item.title}
                   </span>
-                  <button className="hover:text-destructive text-lg opacity-75 hover:opacity-100 transition-all">
+                  <button
+                    onClick={(ev) => {
+                      ev.stopPropagation();
+                      ev.preventDefault();
+                      handleSelect(item);
+                    }}
+                    type="button"
+                    className="hover:text-destructive text-lg opacity-75 hover:opacity-100 transition-all"
+                  >
                     &times;
                   </button>
                 </div>
               ))}
             </>
           ) : (
-            props.placeholder || "Select options"
+            <div className="text-sm">
+              {props.placeholder || "Select from the list"}
+            </div>
           )}
           <button
             type="button"
@@ -126,9 +154,9 @@ export default function MultipleSelectBox(props: Props) {
             <CommandEmpty className="p-6 text-center w-full">
               No results found.
             </CommandEmpty>
-            <CommandGroup heading={props.contentHintText || "Suggestions"}>
+            <CommandGroup heading={props.contentHintText || "Available Groups"}>
               <div className="pr-2 sm:pr-4 divide-y">
-                {props.options.map((option) => {
+                {options.map((option) => {
                   const isSelected = selectedItems.some(
                     (item) => item.value === option.value
                   );
@@ -141,19 +169,8 @@ export default function MultipleSelectBox(props: Props) {
                           ? "opacity-100 bg-secondary text-secondary-foreground"
                           : "opacity-90"
                       )}
-                      value={option.value.toString() || option.title}
                       onSelect={() => handleSelect(option)}
                     >
-                      <span className="w-6 mr-2 inline-block">
-                        <Check
-                          className={cn(
-                            "h-4 w-4",
-                            isSelected
-                              ? "opacity-100 text-primary"
-                              : "opacity-50"
-                          )}
-                        />
-                      </span>
                       {option.title || option.value}
                     </CommandItem>
                   );

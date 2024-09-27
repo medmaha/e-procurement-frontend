@@ -186,8 +186,8 @@ function Field({ field, value }: any) {
         <span className="text-primary" title=" This field is required">
           {field.required && "*"}
         </span>
-        <small className="pl-4 opacity-80 font-light text-xs">
-          {field.help && <>{"( " + field.help + ")"}</>}
+        <small className="pl-2 text-muted-foreground">
+          {field.help && <>{"(" + field.help + ")"}</>}
         </small>
       </Label>
       {field.type === "textarea" ? (
@@ -212,7 +212,9 @@ function Field({ field, value }: any) {
           disabled={pending}
           type={field.type}
           name={field.name}
+          placeholder={field.placeholder}
           required={field.required}
+          className="placeholder:text-xs"
         />
       )}
     </div>
@@ -255,33 +257,35 @@ const fields = [
   {
     name: "first_name",
     label: "First Name",
+    help: "e.g. John",
     type: "text",
     required: true,
   },
   {
     name: "last_name",
     label: "Last Name",
+    help: "e.g. Doe",
     type: "text",
     required: true,
   },
   {
     name: "email",
     label: "Email Address",
+    help: "This will be used for logins and notifications",
     type: "email",
     required: true,
   },
   {
     name: "groups",
     label: "Groups",
-    help: "Auth permissions group to the user account",
+    help: "Specify the authorization groups of the staff",
     type: "select",
     selector: GroupsSelect,
   },
-
   {
     name: "unit",
     label: "Unit",
-    help: "The unit in which the staff belongs to",
+    help: "What unit does the staff currently belong to?",
     type: "select",
     selector: UnitsSelect,
     required: true,
@@ -289,7 +293,7 @@ const fields = [
   {
     name: "job_title",
     label: "Position",
-    hint: "Current position of the staff",
+    help: "Current position of the staff",
     type: "text",
     placeholder: "e.g. HR, Manager, Developer",
   },
