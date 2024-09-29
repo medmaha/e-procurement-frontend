@@ -81,8 +81,11 @@ export default function AddRFQItemsContainer(props: Props) {
   }
 
   async function submitForm(formData: FormData) {
-    if (formRef.current && !formRef.current.checkValidity())
-      return formRef.current.reportValidity();
+    if (formRef.current && !formRef.current.checkValidity()){
+
+      formRef.current.reportValidity();
+      return;
+    }
 
     const json = transformFormDataWithItems(formData);
 

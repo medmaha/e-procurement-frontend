@@ -90,8 +90,11 @@ type Props2 = {
 function RFQResponseContent(props: Props2) {
 	const { closeDialog } = props;
 	async function submitForm(formData: FormData) {
-		if (formRef.current && !formRef.current.checkValidity())
-			return formRef.current.reportValidity();
+		if (formRef.current && !formRef.current.checkValidity()){
+
+			formRef.current.reportValidity();
+			return;
+		}
 		const response = await submitRFQResponse(formData, location.pathname);
 		if (response.success) {
 			toast.success(response.message);
