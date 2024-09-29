@@ -48,6 +48,7 @@ type Props = {
   required?: boolean;
   placeholder?: string;
   contentHintText?: string;
+  contentClassName?: string;
   inputPlaceholder?: string;
 };
 
@@ -102,8 +103,9 @@ export default function MultipleSelectBox(props: Props) {
         <div
           aria-expanded={open}
           className={cn(
-            "w-full cursor-pointer gap-2 relative pr-7 border rounded-md flex-wrap p-2 pl-2 flex items-center",
-            open && "bg-transparent"
+            "relative cursor-pointer min-h-10 flex gap-1.5 w-full rounded-md border border-input bg-background flex-wrap p-2 items-center pl-2 pr-7 text-sm ring-offset-background font-medium",
+            open && "ring-2 outline-none ring-ring ring-offset-2",
+            props.disabled && "disabled:cursor-not-allowed disabled:opacity-50"
           )}
         >
           {selectedItems && selectedItems.length > 0 ? (
@@ -111,9 +113,13 @@ export default function MultipleSelectBox(props: Props) {
               {selectedItems.map((item) => (
                 <div
                   key={item.value}
-                  className="p-0.5 px-1.5 border hover:border-primary group transition-all border-secondary rounded-xl inline-flex items-center"
+                  className={cn(
+                    "p-0.5 px-1.5 border bg-secondary/50 text-secondary-foreground/80 border-secondary/90 group transition-all rounded-xl inline-flex items-center",
+                    !open &&
+                      "bg-secondary/70 border-secondary/80 text-secondary-foreground/90 group-hover:text-secondary-foreground hover:bg-secondary/90 hover:border-secondary"
+                  )}
                 >
-                  <span className="text-xs inline-block mr-1 group-hover:border-primary border-r border-secondary pr-2">
+                  <span className="text-xs inline-block text-foreground/70 group-hover:text-foreground/90 mr-1 group-hover:border-secondary border-r border-secondary/80 pr-2">
                     {item.title}
                   </span>
                   <button
@@ -143,9 +149,22 @@ export default function MultipleSelectBox(props: Props) {
           </button>
         </div>
       </PopoverTrigger>
+      {props.name && (
+        <input
+          hidden
+          name={props.name}
+          value={selectedItems?.map((i) => i.value).join(",")}
+        />
+      )}
       <PopoverContent className="w-full p-0 relative overflow-clip">
-        <Command className="rounded-lg border shadow-md w-max max-w-[630px]">
+        <Command
+          className={cn(
+            "rounded-lg border shadow-md w-max min-w-[200xp] max-w-[630px]",
+            props.contentClassName
+          )}
+        >
           <CommandInput
+            autoFocus
             placeholder={
               props.inputPlaceholder || "Type a command or search..."
             }
