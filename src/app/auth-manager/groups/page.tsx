@@ -84,17 +84,13 @@ export default async function Page() {
               )}
             </div>
           </div>
-          {/* {permissions.create && ( */}
-
-          {/* TODO: Fix this mess */}
-          {user.meta.id.toString() == "2" &&
-            user.profile_id.toString() == "1" && (
-              <div className="grid items-center">
-                <AddOrEditGroup user={user}>
-                  <Button className="font-semibold text-lg">+ New Group</Button>
-                </AddOrEditGroup>
-              </div>
-            )}
+          {permissions.create && (
+            <div className="grid items-center">
+              <AddOrEditGroup user={user}>
+                <Button className="font-semibold text-lg">+ New Group</Button>
+              </AddOrEditGroup>
+            </div>
+          )}
         </div>
       </div>
 
