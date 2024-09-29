@@ -45,8 +45,14 @@ export default async function Page(props: PageProps) {
       password: "prc@2k2*",
     },
     {
-      email: "vendor@mail.com",
+      email: "account@unionlend.com",
       password: "prc@2k2*",
+      vendor: true,
+    },
+    {
+      email: "account@fundsflow.com",
+      password: "prc@2k2*",
+      vendor: true,
     },
   ];
 
@@ -65,6 +71,9 @@ export default async function Page(props: PageProps) {
                 <th className="p-[5px] text-left font-semibold min-w-[100px]">
                   Password
                 </th>
+                <th className="p-[5px] text-left font-semibold min-w-[100px]">
+                  Profile Type
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y">
@@ -72,6 +81,9 @@ export default async function Page(props: PageProps) {
                 <tr key={demo.email} className="text-xs divide-x">
                   <td className="p-[5px]">{demo.email}</td>
                   <td className="p-[5px]">{demo.password}</td>
+                  <td className="p-[5px]">
+                    {demo.vendor ? "Vendor" : "Staff"}
+                  </td>
                 </tr>
               ))}
             </tbody>
