@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 import ReactSelect from "react-select";
 import CACHE from "@/lib/caching";
 import { getVendorSelection } from "./actions";
+import MultipleSelectBox from "../ui/multi-select";
 
 type Props = {
   isMulti?: boolean;
@@ -62,38 +63,11 @@ export default function SupplierSelect(props: Props) {
     <>
       <input hidden name="suppliers" defaultValue={selected?.join(",")} />
 
-      <ReactSelect
+      <MultipleSelectBox
         options={groups}
-        placeholder="Select multiple vendors"
-        required={required}
-        value={values}
-        isDisabled={disabled}
-        closeMenuOnSelect={isMulti ? false : true}
-        isMulti={isMulti}
-        isClearable={false}
-        classNamePrefix="react-select"
-        classNames={{
-          container: ({}) => {
-            return "bg-red-500 border rounded-md";
-          },
-          input: ({}) => {
-            return "bg-none";
-          },
-          placeholder: ({}) => {
-            return "";
-          },
-          menuList: () => {
-            return "border left-0";
-          },
-          singleValue: () => {
-            return "border hover:bg-secondary";
-          },
-          control: (state) =>
-            state.isFocused
-              ? "border-red-600 bg-secondary"
-              : "border-grey-300 bg-secondary",
-        }}
-        onChange={handleSelectChange}
+        name=""
+        defaultValues={values}
+        onValueChange={handleSelectChange}
       />
     </>
   );
