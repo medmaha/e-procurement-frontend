@@ -12,7 +12,9 @@ export default function TopNavigationBar({ session, theme }: any) {
   return (
     <header className="sticky border-b top-0 z-10 bg-card bg-opacity-50 backdrop-blur-[3px]">
       <nav className="flex justify-between items-center gap-5 h-[70px] text-card-foreground px-4 md:container">
-        <HistorySwitcher user={session} />
+        <div className="hidden md:block">
+          <HistorySwitcher user={session} />
+        </div>
         {session && <SearchBar user={session} />}
 
         <div className="flex items-center gap-4 flex-1 justify-end">
