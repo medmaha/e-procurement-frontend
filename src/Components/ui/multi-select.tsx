@@ -35,6 +35,7 @@ interface Framework {
 type SelectItem = {
   title?: string;
   value: string | number;
+  label?: string;
 };
 
 type Props = {
@@ -120,7 +121,7 @@ export default function MultipleSelectBox(props: Props) {
                   )}
                 >
                   <span className="text-xs inline-block text-foreground/70 group-hover:text-foreground/90 mr-1 group-hover:border-secondary border-r border-secondary/80 pr-2">
-                    {item.title}
+                    {item.label || item.title}
                   </span>
                   <button
                     onClick={(ev) => {
@@ -190,7 +191,7 @@ export default function MultipleSelectBox(props: Props) {
                       )}
                       onSelect={() => handleSelect(option)}
                     >
-                      {option.title || option.value}
+                      {option.label || option.title}
                     </CommandItem>
                   );
                 })}
