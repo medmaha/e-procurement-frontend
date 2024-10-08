@@ -72,3 +72,65 @@ interface Requisition {
   created_date: string;
   last_modified: string;
 }
+
+// --------------------
+
+interface InnerRequisitionRetrieveApproval {
+  id: null | number;
+  officer: {
+    id: number;
+    name: string;
+  };
+  remark: string;
+  approve: ApprovalStatus;
+  created_at: string;
+}
+
+interface R_FinanceApproval extends InnerRequisitionRetrieveApproval {
+  funds_confirmed: true;
+}
+interface R_ProcurementApproval extends InnerRequisitionRetrieveApproval {
+  part_of_annual_plan: boolean;
+  annual_procurement_plan: {
+    id: string;
+    title: string;
+  };
+}
+
+interface RequisitionRetrieveApproval {
+  id: number;
+  editable: boolean;
+  status: ApprovalStatus;
+  procurement_method: string;
+  unit_approval: InnerRequisitionRetrieveApproval;
+  department_approval: InnerRequisitionRetrieveApproval;
+  finance_approval: R_FinanceApproval;
+  procurement_approval: R_ProcurementApproval;
+  created_date: string;
+  last_modified: string;
+  stage: string;
+}
+
+interface RequisitionRetrieve {
+  id: number;
+  request_type: string;
+  items: RequisitionItem[];
+  changeable: boolean;
+  officer: {
+    id: number;
+    name: string;
+    unit: {
+      id: number;
+      name: string;
+    };
+    department: {
+      id: number;
+      name: string;
+    };
+  };
+  approval_status: ApprovalStatus;
+  remarks: string;
+  approval: RequisitionRetrieveApproval;
+  created_date: string;
+  last_modified: string;
+}

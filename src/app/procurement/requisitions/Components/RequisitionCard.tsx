@@ -4,7 +4,7 @@ import { Button } from "@/Components/ui/button";
 import { formatNumberAsCurrency } from "@/lib/helpers/transformations";
 import Approval from "./Approval";
 import EditRequisition from "./EditRequisition";
-import ViewRequisitionDetails from "./RequisitionDetails";
+import ViewRequisitionDetails from "./RequisitionModal";
 import ViewApproval from "./ViewApproval";
 
 type Props = {

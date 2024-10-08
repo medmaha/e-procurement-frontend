@@ -10,7 +10,7 @@ import {
 } from "@/Components/ui/table";
 import { generate_unique_id } from "@/lib/helpers/generator";
 import { Badge } from "@/Components/ui/badge";
-import ViewRequisitionDetails from "./RequisitionDetails";
+import ViewRequisitionDetails from "./RequisitionModal";
 import { format } from "date-fns";
 // import { RequisitionDetails } from './requisition-details'
 

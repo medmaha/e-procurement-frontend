@@ -22,13 +22,11 @@ import {
 } from "@/Components/ui/select";
 import { Switch } from "@/Components/ui/switch";
 import { Textarea } from "@/Components/ui/textarea";
-import SubmitButton from "@/Components/widget/SubmitButton";
 import CACHE from "@/lib/caching";
 import {
   approveRequisition,
   getDepartmentProcurementPlanItems,
 } from "../actions";
-import { RequisitionDetails } from "./RequisitionDetails";
 import ViewDepartmentPlans from "./ViewDepartmentPlans";
 import ActionConfirmation from "@/Components/ActionConfirmation";
 
@@ -76,11 +74,6 @@ export default function Approval({
         </DialogHeader>
         {isOpen && (
           <div className="max-h-[80dvh] overflow-hidden overflow-y-auto px-6">
-            <RequisitionDetails
-              onRequisitionFetch={onRequisitionFetch}
-              data={data}
-              user={user}
-            />
             <ApprovalForm
               department={props.department}
               data={data?.approval}

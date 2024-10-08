@@ -32,6 +32,7 @@ import GroupsSelect from "@/Components/widget/AuthGroupsSelect";
 import SubmitButton from "@/Components/widget/SubmitButton";
 import UnitsSelect from "@/Components/widget/UnitsSelect";
 import { createStaff, retrieveUpdateStaff, updateStaff } from "../actions";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 type Props = {
   text?: string;
@@ -45,21 +46,48 @@ type Props = {
 export default function AddStaff(props: Props) {
   const { text, user, children, autoOpen } = props;
   const [isOpen, setIsOpen] = React.useState(autoOpen);
-  const [staff, setStaff] = React.useState(props.staff);
 
-  const fetchStaff = useCallback(async () => {
-    if (props.staff) {
-      const response = await retrieveUpdateStaff(String(props.staff.id));
-      if (response.success) {
-        const data = { ...props.staff, ...response.data };
-        setStaff(data);
+  const staffQuery = useQuery({
+    staleTime: Infinity,
+    enabled: isOpen && !!props.staff,
+    queryKey: ["staff", props.staff?.id, props.user.profile_id],
+    queryFn: async () => {
+      if (props.staff) {
+        const response = await retrieveUpdateStaff(String(props.staff.id));
+        if (response.success) {
+          const data: Staff = { ...(props.staff || {}), ...response.data };
+          return data;
+        }
+        throw response;
       }
-    }
-  }, [props]);
+    },
+  });
 
-  useEffect(() => {
-    isOpen && fetchStaff();
-  }, [isOpen, fetchStaff]);
+  const queryClient = useQueryClient();
+
+  const submit = async (formData: FormData) => {
+    const { message, success } = await (props.staff
+      ? updateStaff
+      : createStaff)(Object.fromEntries(formData.entries()));
+    if (success) {
+      toast.success(message);
+
+      // invalidate queries
+      // FIXME: avoid refetching this query when closing modal
+      await queryClient.invalidateQueries({
+        queryKey: ["staff", props.staff?.id, props.user.profile_id],
+        refetchType: "none",
+      });
+
+      // Staff list table invalidation
+      queryClient.invalidateQueries({
+        queryKey: ["staffs", props.user.profile_id],
+      });
+
+      setIsOpen(false);
+    }
+    toast.success(message, { type: "error" });
+  };
 
   return (
     <>
@@ -76,10 +104,10 @@ export default function AddStaff(props: Props) {
         <DialogContent className="max-w-[700px] mx-auto px-2">
           <DialogHeader className="px-2 sm:px-4 border-b pb-4">
             <DialogTitle className="">
-              {staff ? "Update Staff" : "Add A Staff"}
+              {props.staff ? "Update Staff" : "Add A Staff"}
             </DialogTitle>
             <DialogDescription>
-              {staff
+              {props.staff
                 ? "Update the existing staff details."
                 : "Provide the details for the new staff"}
             </DialogDescription>
@@ -87,8 +115,8 @@ export default function AddStaff(props: Props) {
           {isOpen && (
             <Form
               open={isOpen}
-              staff={staff}
-              closeDialog={() => setIsOpen(false)}
+              staff={staffQuery.data || props.staff}
+              submitFn={submit}
               user={user}
               isAdmin={props.isAdmin}
             />
@@ -100,25 +128,16 @@ export default function AddStaff(props: Props) {
 }
 
 type Props2 = {
-  closeDialog: () => void;
   staff?: Staff;
   isAdmin?: boolean;
   user: AuthUser;
   open: boolean;
+  submitFn: (formData: FormData) => Promise<void>;
 };
 
-function Form({ closeDialog, staff, user, open, isAdmin }: Props2) {
+function Form({ staff, user, open, isAdmin, submitFn }: Props2) {
   async function submit(formData: FormData) {
-    const { message, success } = await (staff ? updateStaff : createStaff)(
-      Object.fromEntries(formData.entries()),
-      location.pathname
-    );
-    if (success) {
-      toast.success(message);
-      closeDialog();
-      return;
-    }
-    toast.error(message);
+    await submitFn(formData);
   }
 
   function getDefaultValue(fieldName: string) {

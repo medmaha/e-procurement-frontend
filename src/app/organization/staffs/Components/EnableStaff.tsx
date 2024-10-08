@@ -26,7 +26,7 @@ export default function EnableStaff({ staff }: any) {
   }, []);
 
   async function submitRemove(formData: FormData) {
-    const response = await updateStaff(formData, location.pathname);
+    const response = await updateStaff(formData);
     if (response.success) {
       toast.success(
         response.message ?? "Staff " + staff.name + " has been disabled."
