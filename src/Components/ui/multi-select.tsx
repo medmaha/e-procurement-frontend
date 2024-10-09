@@ -1,17 +1,7 @@
 "use client";
 
 import * as React from "react";
-import {
-  Calculator,
-  Calendar,
-  Check,
-  ChevronsUpDown,
-  CreditCard,
-  Settings,
-  Smile,
-  User,
-} from "lucide-react";
-import { Button } from "./button";
+import { ChevronsUpDown } from "lucide-react";
 import {
   Command,
   CommandEmpty,
@@ -19,18 +9,10 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-  CommandSeparator,
-  CommandShortcut,
 } from "./command";
 
-import { Badge } from "./badge";
 import { Popover, PopoverContent, PopoverTrigger } from "./popover";
 import { cn } from "@/lib/ui/utils";
-
-interface Framework {
-  value: string;
-  label: string;
-}
 
 type SelectItem = {
   title?: string;
@@ -58,24 +40,13 @@ export default function MultipleSelectBox(props: Props) {
   const [selectedItems, setSelectedItems] = React.useState<SelectItem[]>([]);
   const [options, setOptions] = React.useState(props.options);
 
-  const removeSelectedOptionsFromList = React.useCallback(
-    (selectedOptions: SelectItem[], options: SelectItem[]) => {
-      return options.filter(
-        (option) =>
-          !selectedOptions.some(
-            (selectedOption) => selectedOption.value === option.value
-          )
-      );
-    },
-    []
-  );
-
   React.useEffect(() => {
     setSelectedItems(props.defaultValues || []);
-    setOptions(
-      removeSelectedOptionsFromList(props.defaultValues || [], props.options)
-    );
-  }, [props.defaultValues, props.options, removeSelectedOptionsFromList]);
+  }, [props.defaultValues]);
+
+  React.useEffect(() => {
+    setOptions(removeSelectedOptionsFromList(selectedItems, props.options));
+  }, [props.options, selectedItems]);
 
   const handleSelect = (item: SelectItem) => {
     setSelectedItems((current) => {
@@ -86,15 +57,12 @@ export default function MultipleSelectBox(props: Props) {
         const values = current.filter(
           (selected) => selected.value !== item.value
         );
-        setOptions(removeSelectedOptionsFromList(values, props.options));
         props.onValueChange?.(values);
-        return values;
-      } else {
-        const values = [...current, item];
-        props.onValueChange?.(values);
-        setOptions(removeSelectedOptionsFromList(values, props.options));
         return values;
       }
+      const values = [...current, item];
+      props.onValueChange?.(values);
+      return values;
     });
   };
 
@@ -154,7 +122,7 @@ export default function MultipleSelectBox(props: Props) {
         <input
           hidden
           name={props.name}
-          value={selectedItems?.map((i) => i.value).join(",")}
+          defaultValue={selectedItems?.map((i) => i.value).join(",")}
         />
       )}
       <PopoverContent className="w-full p-0 relative overflow-clip">
@@ -175,7 +143,7 @@ export default function MultipleSelectBox(props: Props) {
               No results found.
             </CommandEmpty>
             <CommandGroup heading={props.contentHintText || "Available Groups"}>
-              <div className="pr-2 sm:pr-4 divide-y">
+              <div key={options.length} className="pr-2 sm:pr-4 divide-y">
                 {options.map((option) => {
                   const isSelected = selectedItems.some(
                     (item) => item.value === option.value
@@ -203,3 +171,15 @@ export default function MultipleSelectBox(props: Props) {
     </Popover>
   );
 }
+
+const removeSelectedOptionsFromList = (
+  selectedOptions: SelectItem[],
+  options: SelectItem[]
+) => {
+  return options.filter(
+    (option) =>
+      !selectedOptions.some(
+        (selectedOption) => selectedOption.value === option.value
+      )
+  );
+};
