@@ -1,15 +1,23 @@
 "use client";
-import { useCallback, useEffect, useState } from "react";
 import { getAuthGroupSelection } from "./actions";
 import MultipleSelectBox from "../ui/multi-select";
+import { Select, SelectContent, SelectItem, SelectTrigger } from "../ui/select";
+import { useQuery } from "@tanstack/react-query";
+
+type SingleSelectProps = {
+  isMulti: false;
+  defaultValue?: Selection;
+};
+type MultiSelectProps = {
+  isMulti: true;
+  defaultValue?: any[];
+};
 
 type Props = {
-  isMulti?: boolean;
   required?: boolean;
   disabled?: boolean;
-  defaultValue?: Selection[];
   onChange?: (values: any) => void;
-};
+} & (SingleSelectProps | MultiSelectProps);
 
 type Selection = {
   value: number;
@@ -17,97 +25,60 @@ type Selection = {
 };
 
 export default function AuthGroupSelection(props: Props) {
-  const { required, disabled, isMulti = true } = props;
-
-  const [selected, setSelected] = useState<string[] | null>(null);
-  const [values, setValues] = useState<
-    TransformedSelection[] | TransformedSelection | undefined
-  >();
-
-  const [groups, setGroups] = useState<TransformedSelection[]>([]);
-
-  const fetchGroups = useCallback(async () => {
-    const response = await getAuthGroupSelection();
-    if (response.success) {
-      const data = transformData(response.data);
-      if (data) {
-        setGroups(data);
+  const groupQuery = useQuery({
+    queryKey: ["auth-groups"],
+    queryFn: async () => {
+      const response = await getAuthGroupSelection();
+      if (response.success) {
+        const data: Selection[] = transformData(response.data);
+        return data;
       }
-    }
-  }, []);
+      throw Response;
+    },
+  });
 
-  useEffect(() => {
-    setSelected(defaultSelected(props.defaultValue));
-    setValues(defaultValues(props.defaultValue, isMulti));
-  }, [props.defaultValue, isMulti]);
-
-  useEffect(() => {
-    fetchGroups();
-  }, [fetchGroups]);
-
-  function handleSelectChange(data: any) {
-    setValues(data);
-    if (Array.isArray(data)) {
-      const s = (data as TransformedSelection[]).map((v) => String(v.value));
-      setSelected(s);
-    } else {
-      setSelected([String(data.value)]);
-    }
+  if (!props.isMulti) {
+    return (
+      <Select
+        defaultValue={props.defaultValue?.value.toString()}
+        onValueChange={(value) => props.onChange?.(value)}
+      >
+        <SelectTrigger>Select Group</SelectTrigger>
+        <SelectContent>
+          {groupQuery.data?.map((group) => {
+            return (
+              <SelectItem
+                key={group.value.toString()}
+                value={group.value.toString()}
+              >
+                {group.title}
+              </SelectItem>
+            );
+          })}
+        </SelectContent>
+      </Select>
+    );
   }
 
   return (
     <>
-      <input hidden name="group_ids" defaultValue={selected?.join(",")} />
-
       <MultipleSelectBox
-        options={groups}
-        name=""
-        defaultValues={
-          Array.isArray(props.defaultValue)
-            ? transformData(props.defaultValue)
-            : props.defaultValue && transformData([props.defaultValue])
-        }
-        onValueChange={(values) => {
-          handleSelectChange(values);
-        }}
+        name="group_ids"
+        options={groupQuery.data || []}
+        defaultValues={transformData(props.defaultValue || [])}
       />
     </>
   );
 }
 
-type TransformedSelection = {
-  title: string;
-  value: string | number;
-};
-
-function defaultSelected(data?: Selection[]) {
+function transformData(data?: any[]): Selection[] {
   return (
     data?.reduce((value, current) => {
-      value.push(String(current.value));
+      value.push({
+        value: current.id,
+        title: current.name,
+      });
       return value;
-    }, [] as string[]) ?? []
+    }, [] as Selection[]) || []
   );
-}
-function defaultValues(data?: Selection[], isMulti?: boolean) {
-  if (isMulti) return transformData(data);
-  return transformData(data)?.at(0);
-}
-
-function transformData(data?: any[]) {
-  return data?.reduce((value, current) => {
-    value.push({
-      value: current.id,
-      title: current.name,
-    });
-    return value;
-  }, [] as TransformedSelection[]);
-}
-function transformBackData(data?: TransformedSelection[]) {
-  return data?.reduce((value, current) => {
-    value.push({
-      value: Number(current.value),
-      title: current.title,
-    });
-    return value;
-  }, [] as Selection[]);
 }
