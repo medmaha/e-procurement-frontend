@@ -27,6 +27,7 @@ type Selection = {
 export default function AuthGroupSelection(props: Props) {
   const groupQuery = useQuery({
     queryKey: ["auth-groups"],
+    staleTime: Infinity,
     queryFn: async () => {
       const response = await getAuthGroupSelection();
       if (response.success) {

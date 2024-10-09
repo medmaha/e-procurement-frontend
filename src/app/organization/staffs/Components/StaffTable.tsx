@@ -21,6 +21,9 @@ type Props = {
 export default function StaffTable({ user }: Props) {
   const [permissions, setPermissions] = useState<AuthPerm>();
 
+  const [selectedToBeUpdated, setSelectedToBeUpdated] = useState(null);
+  const [staffToUpdate, setStaffToUpdate] = useState<Staff>();
+
   const staffsQuery = useQuery({
     queryKey: ["staffs", user.profile_id],
     staleTime: 1000 * 60 * 3,
@@ -39,6 +42,14 @@ export default function StaffTable({ user }: Props) {
 
   return (
     <>
+      {staffToUpdate && (
+        <AddStaff
+          autoOpen
+          user={user}
+          staff={staffToUpdate}
+          onClose={() => setStaffToUpdate(undefined)}
+        />
+      )}
       <div className="section-heading">
         <div className="relative">
           <Input
@@ -64,7 +75,7 @@ export default function StaffTable({ user }: Props) {
           <TabularData
             data={staffsQuery.data}
             loading={staffsQuery.isLoading}
-            columns={staffColumns(user, permissions)}
+            columns={staffColumns(user, setStaffToUpdate, permissions)}
           />
         </div>
       </div>
@@ -72,7 +83,7 @@ export default function StaffTable({ user }: Props) {
   );
 }
 
-function staffColumns(user: AuthUser, permissions?: AuthPerm) {
+function staffColumns(user: AuthUser, updateStaff: any, perms?: AuthPerm) {
   const columns: Array<ColumnDef<Staff>> = [
     {
       accessorKey: "id",
@@ -147,12 +158,15 @@ function staffColumns(user: AuthUser, permissions?: AuthPerm) {
         const staff = params.row.original;
         return (
           <span className="inline-flex justify-center items-center gap-1 w-max">
-            {permissions?.update && (
-              <AddStaff user={user} staff={staff}>
-                <Button size={"sm"} variant={"secondary"} className="text-sm">
-                  Update
-                </Button>
-              </AddStaff>
+            {perms?.update && (
+              <Button
+                onClick={() => updateStaff(staff)}
+                size={"sm"}
+                variant={"secondary"}
+                className="text-sm"
+              >
+                Update
+              </Button>
             )}
 
             {staff.id !== user.profile_id && (

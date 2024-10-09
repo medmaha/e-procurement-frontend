@@ -41,6 +41,7 @@ type Props = {
   children?: ReactNode;
   isAdmin?: boolean;
   autoOpen?: boolean;
+  onClose?: any;
 };
 
 export default function AddStaff(props: Props) {
@@ -70,8 +71,6 @@ export default function AddStaff(props: Props) {
 
     const data = Object.fromEntries(formData.entries());
 
-    alert(JSON.stringify(data, null, 4));
-
     const { message, success } = await func(data);
     if (success) {
       toast.success(message);
@@ -95,7 +94,13 @@ export default function AddStaff(props: Props) {
 
   return (
     <>
-      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <Dialog
+        open={isOpen}
+        onOpenChange={(opened) => {
+          setIsOpen(opened);
+          props.onClose?.();
+        }}
+      >
         <DialogTrigger asChild>
           {children ? (
             children
