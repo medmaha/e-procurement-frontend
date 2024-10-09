@@ -66,9 +66,13 @@ export default function AddStaff(props: Props) {
   const queryClient = useQueryClient();
 
   const submit = async (formData: FormData) => {
-    const { message, success } = await (props.staff
-      ? updateStaff
-      : createStaff)(Object.fromEntries(formData.entries()));
+    const func = props.staff ? updateStaff : createStaff;
+
+    const data = Object.fromEntries(formData.entries());
+
+    alert(JSON.stringify(data, null, 4));
+
+    const { message, success } = await func(data);
     if (success) {
       toast.success(message);
 
@@ -170,6 +174,9 @@ function Form({ staff, user, open, isAdmin, submitFn }: Props2) {
         onInput={({ currentTarget }) =>
           toggleIsValidForm(currentTarget.checkValidity())
         }
+        onChange={({ currentTarget }) =>
+          toggleIsValidForm(currentTarget.checkValidity())
+        }
       >
         {staff && <input name="obj_id" defaultValue={staff?.id} hidden />}
         <div className="max-h-[65dvh] grid gap-1 overflow-hidden overflow-y-auto px-4 pb-2 min-h-[60dvh]">
@@ -219,7 +226,6 @@ function Field({ field, value }: any) {
       ) : typeof field.selector === "function" ? (
         <field.selector
           defaultValue={value}
-          open={open}
           isMulti={true}
           name={field.name}
           disabled={pending}
