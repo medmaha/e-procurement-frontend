@@ -133,11 +133,13 @@ export default function RequisitionDetail({ user, data, loading }: Props) {
           </AccordionContent>
         </AccordionItem>
       </Accordion>
-      <Accordion type="single" collapsible>
+      <Accordion type="single" defaultValue="items" collapsible>
         <AccordionItem value="items">
           <AccordionTrigger>Requisition Items</AccordionTrigger>
           <AccordionContent className="transition duration-700 pb-6">
             <TabularData
+              plane
+              wrapperClassName="min-h-[15svh]"
               loading={loading}
               data={data?.items}
               columns={itemsColumns}

@@ -1,18 +1,19 @@
 "use client";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { Button } from "@/Components/ui/button";
-import DisableStaff from "./DisableStaff";
-import EnableStaff from "./EnableStaff";
 import { generate_unique_id } from "@/lib/helpers/generator";
 import { ColumnDef } from "@tanstack/react-table";
 import { Badge } from "@/Components/ui/badge";
-import TabularData from "@/Components/widget/TabularData";
+
 import { useQuery } from "@tanstack/react-query";
 import { actionRequest } from "@/lib/utils/actionRequest";
-import AddStaff from "./AddStaff";
 import { Input } from "@/Components/ui/input";
-import { SearchIcon } from "lucide-react";
+import { EditIcon, SearchIcon } from "lucide-react";
+
+import AddOrEditStaff from "./AddOrEditStaff";
+import StaffActivation from "./StaffActivation";
+import TabularData from "@/Components/widget/TabularData";
 
 type Props = {
   user: AuthUser;
@@ -21,8 +22,18 @@ type Props = {
 export default function StaffTable({ user }: Props) {
   const [permissions, setPermissions] = useState<AuthPerm>();
 
-  const [selectedToBeUpdated, setSelectedToBeUpdated] = useState(null);
+  const [selectedToBeUpdated, setStaffToActivate] = useState<Staff>();
   const [staffToUpdate, setStaffToUpdate] = useState<Staff>();
+  4;
+
+  const columns = useMemo(() => {
+    return staffColumns(
+      user,
+      setStaffToUpdate,
+      setStaffToActivate,
+      permissions
+    );
+  }, [user, permissions]);
 
   const staffsQuery = useQuery({
     queryKey: ["staffs", user.profile_id],
@@ -43,11 +54,18 @@ export default function StaffTable({ user }: Props) {
   return (
     <>
       {staffToUpdate && (
-        <AddStaff
+        <AddOrEditStaff
           autoOpen
           user={user}
           staff={staffToUpdate}
           onClose={() => setStaffToUpdate(undefined)}
+        />
+      )}
+      {selectedToBeUpdated && (
+        <StaffActivation
+          staff={selectedToBeUpdated}
+          user={user}
+          onClose={() => setStaffToActivate(undefined)}
         />
       )}
       <div className="section-heading">
@@ -66,28 +84,33 @@ export default function StaffTable({ user }: Props) {
         </div>
         {permissions?.create && (
           <div className="grid items-center">
-            <AddStaff text={"Add Staff"} user={user} autoOpen={false} />
+            <AddOrEditStaff user={user} autoOpen={false}>
+              <Button>
+                Add Staff
+              </Button>
+            </AddOrEditStaff>
           </div>
         )}
       </div>
-      <div className="w-full">
-        <div className="table-wrapper">
-          <TabularData
-            data={staffsQuery.data}
-            loading={staffsQuery.isLoading}
-            columns={staffColumns(user, setStaffToUpdate, permissions)}
-          />
-        </div>
-      </div>
+      <TabularData
+        data={staffsQuery.data}
+        loading={staffsQuery.isLoading}
+        columns={columns}
+      />
     </>
   );
 }
 
-function staffColumns(user: AuthUser, updateStaff: any, perms?: AuthPerm) {
+function staffColumns(
+  user: AuthUser,
+  updateStaff: any,
+  activateStaff: any,
+  perms?: AuthPerm
+) {
   const columns: Array<ColumnDef<Staff>> = [
     {
       accessorKey: "id",
-      header: "Reference ID",
+      header: "Reference",
       cell: (params) => {
         const staff = params.row.original;
         return (
@@ -158,21 +181,38 @@ function staffColumns(user: AuthUser, updateStaff: any, perms?: AuthPerm) {
         const staff = params.row.original;
         return (
           <span className="inline-flex justify-center items-center gap-1 w-max">
-            {perms?.update && (
+            {!staff.disabled && perms?.update && (
               <Button
                 onClick={() => updateStaff(staff)}
-                size={"sm"}
+                size={"icon"}
                 variant={"secondary"}
-                className="text-sm"
+                title="Edit Staff"
+                className="rounded-full"
               >
-                Update
+                <EditIcon className="w-4 h-4" />
               </Button>
             )}
 
             {staff.id !== user.profile_id && (
               <>
-                {!staff.disabled && <DisableStaff staff={staff} />}
-                {staff.disabled && <EnableStaff staff={staff} />}
+                {!staff.disabled && (
+                  <Button
+                    onClick={() => activateStaff(staff)}
+                    size={"sm"}
+                    variant={"destructive"}
+                  >
+                    Disable
+                  </Button>
+                )}
+                {staff.disabled && (
+                  <Button
+                    onClick={() => activateStaff(staff)}
+                    size={"sm"}
+                    variant={"secondary"}
+                  >
+                    Enable
+                  </Button>
+                )}
               </>
             )}
           </span>

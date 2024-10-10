@@ -25,14 +25,19 @@ import {
   TableRow,
 } from "@/Components/ui/table";
 import { Loader2 } from "lucide-react";
+import { cn } from "@/lib/ui/utils";
 
 type Props<T> = {
   data?: T[];
   loading?: boolean;
   columns: ColumnDef<T>[];
+  plane?: boolean;
+  rowClassName?: string;
+  headerClassName?: string;
+  wrapperClassName?: string;
 };
 
-function TabularData<T = any>({ data, columns, loading }: Props<T>) {
+function TabularData<T = any>({ data, columns, loading, ...props }: Props<T>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
 
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -64,14 +69,21 @@ function TabularData<T = any>({ data, columns, loading }: Props<T>) {
   });
 
   return (
-    <div className="w-full min-h-[30svh] relative">
-      <Table className="border-none">
-        <TableHeader className="bg-accent md:h-[50px] h-[40px]">
+    <div className={cn("w-full min-h-[30svh] relative", props.wrapperClassName)}>
+      <Table className="border-none w-full">
+        <TableHeader className="md:h-[50px] h-[40px]">
           {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id}>
+            <TableRow
+              key={headerGroup.id}
+              className={cn(
+                "p-0 bg-secondary/50",
+                props.headerClassName,
+                props.plane && "hover:bg-transparent bg-transparent"
+              )}
+            >
               {headerGroup.headers.map((header) => {
                 return (
-                  <TableHead key={header.id} className="p-2.5 text-xs">
+                  <TableHead key={header.id} className="p-2 md:p-2.5 text-xs">
                     {header.isPlaceholder
                       ? null
                       : flexRender(
@@ -89,7 +101,11 @@ function TabularData<T = any>({ data, columns, loading }: Props<T>) {
             ? table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
-                  className="p-0"
+                  className={cn(
+                    "p-0",
+                    props.rowClassName,
+                    props.plane && "hover:bg-transparent"
+                  )}
                   data-state={row.getIsSelected() && "selected"}
                 >
                   {row.getVisibleCells().map((cell) => (

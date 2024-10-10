@@ -56,11 +56,6 @@ export default function RequisitionModal(props: Props) {
             <DialogTitle className="text-xl sm:text-2xl capitalize">
               Requisition Details
             </DialogTitle>
-            <DialogDescription className="pb-0 mb-0">
-              <p className="text-sm text-muted-foreground">
-                View the details of the requisition {requisitionQuery.data?.id}
-              </p>
-            </DialogDescription>
             {/* <div className="w-full text-right flex items-center justify-end gap-4">
               <Link
                 href={"/procurement/requisitions/" + requisitionQuery.data?.id}

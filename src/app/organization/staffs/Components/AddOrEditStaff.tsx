@@ -1,8 +1,6 @@
 "use client";
 import React, {
   ReactNode,
-  useCallback,
-  useEffect,
   useRef,
   useState,
 } from "react";
@@ -32,10 +30,9 @@ import GroupsSelect from "@/Components/widget/AuthGroupsSelect";
 import SubmitButton from "@/Components/widget/SubmitButton";
 import UnitsSelect from "@/Components/widget/UnitsSelect";
 import { createStaff, retrieveUpdateStaff, updateStaff } from "../actions";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {  useQuery, useQueryClient } from "@tanstack/react-query";
 
 type Props = {
-  text?: string;
   staff?: undefined | Staff;
   user: AuthUser;
   children?: ReactNode;
@@ -44,8 +41,8 @@ type Props = {
   onClose?: any;
 };
 
-export default function AddStaff(props: Props) {
-  const { text, user, children, autoOpen } = props;
+export default function AddOrEditStaff(props: Props) {
+  const {  user, children, autoOpen } = props;
   const [isOpen, setIsOpen] = React.useState(autoOpen);
 
   const staffQuery = useQuery({
@@ -98,17 +95,11 @@ export default function AddStaff(props: Props) {
         open={isOpen}
         onOpenChange={(opened) => {
           setIsOpen(opened);
-          props.onClose?.();
+          !opened && props.onClose?.();
         }}
       >
         <DialogTrigger asChild>
-          {children ? (
-            children
-          ) : (
-            <Button size={"sm"} className="">
-              {text ? text : "Add a Staff"}
-            </Button>
-          )}
+          {children}
         </DialogTrigger>
         <DialogContent className="max-w-[700px] mx-auto px-2">
           <DialogHeader className="px-2 sm:px-4 border-b pb-4">
