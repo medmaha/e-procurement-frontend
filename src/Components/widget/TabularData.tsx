@@ -31,9 +31,11 @@ type Props<T> = {
   data?: T[];
   loading?: boolean;
   columns: ColumnDef<T>[];
-  plane?: boolean;
+  plain?: boolean;
   rowClassName?: string;
+  rowCellClassName?: string;
   headerClassName?: string;
+  headerCellClassName?: string;
   wrapperClassName?: string;
 };
 
@@ -69,7 +71,12 @@ function TabularData<T = any>({ data, columns, loading, ...props }: Props<T>) {
   });
 
   return (
-    <div className={cn("w-full min-h-[30svh] relative", props.wrapperClassName)}>
+    <div
+      className={cn(
+        "w-full min-h-[30svh] relative border",
+        props.wrapperClassName
+      )}
+    >
       <Table className="border-none w-full">
         <TableHeader className="md:h-[50px] h-[40px]">
           {table.getHeaderGroups().map((headerGroup) => (
@@ -78,12 +85,18 @@ function TabularData<T = any>({ data, columns, loading, ...props }: Props<T>) {
               className={cn(
                 "p-0 bg-secondary/50",
                 props.headerClassName,
-                props.plane && "hover:bg-transparent bg-transparent"
+                props.plain && "hover:bg-transparent bg-transparent"
               )}
             >
               {headerGroup.headers.map((header) => {
                 return (
-                  <TableHead key={header.id} className="p-2 md:p-2.5 text-xs">
+                  <TableHead
+                    key={header.id}
+                    className={cn(
+                      "p-2 md:p-2.5 text-xs",
+                      props.headerCellClassName
+                    )}
+                  >
                     {header.isPlaceholder
                       ? null
                       : flexRender(
@@ -104,12 +117,15 @@ function TabularData<T = any>({ data, columns, loading, ...props }: Props<T>) {
                   className={cn(
                     "p-0",
                     props.rowClassName,
-                    props.plane && "hover:bg-transparent"
+                    props.plain && "hover:bg-transparent"
                   )}
                   data-state={row.getIsSelected() && "selected"}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id} className="p-2.5 text-xs">
+                    <TableCell
+                      key={cell.id}
+                      className={cn("p-2.5 text-xs", props.rowCellClassName)}
+                    >
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()

@@ -71,7 +71,7 @@ export default function RequisitionModal(props: Props) {
               </Link>
             </div> */}
           </DialogHeader>
-          <div className="flex-1 block space-y-6 w-full px-4 h-full max-h-[63svh] overflow-hidden overflow-y-auto">
+          <div className="flex-1 block space-y-6 w-full px-4 h-full max-h-[75svh] overflow-hidden overflow-y-auto">
             <RequisitionDetail
               user={user}
               loading={requisitionQuery.isLoading}

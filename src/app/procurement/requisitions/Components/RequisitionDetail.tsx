@@ -14,144 +14,138 @@ import { AccordionContent } from "@radix-ui/react-accordion";
 import ApprovalDetails from "./ApprovalDetails";
 import { generate_unique_id } from "@/lib/helpers/generator";
 import { useMemo } from "react";
+import { cn } from "@/lib/ui/utils";
 
 type Props = {
   user: AuthUser;
   loading: boolean;
   data?: RequisitionRetrieve;
+  withoutApprovals?: boolean;
 };
 
-export default function RequisitionDetail({ user, data, loading }: Props) {
+export default function RequisitionDetail(props: Props) {
+  const { user, data, loading, withoutApprovals } = props;
+
   const itemsColumns = useMemo(() => {
     return requisitionItemColumns(user);
   }, [user]);
+
   return (
     <>
-      <Accordion type="single" collapsible defaultValue="details">
-        <AccordionItem value="details">
-          <AccordionTrigger>Details</AccordionTrigger>
-          <AccordionContent className="transition duration-700 pb-6">
-            <div className="flex items-center flex-wrap sm:grid gap-4 sm:grid-cols-4 grid-cols-2 w-full pt-4">
-              <div className="grid">
-                <p className="text-sm font-semibold leading-none">
-                  Requisition ID
-                </p>
-                <p className="text-xs text-muted-foreground pt-0.5 truncate">
-                  {data && generate_unique_id("REQ", data.id)}
-                </p>
-              </div>
-              <div className="grid">
-                <p className="text-sm font-semibold leading-none">Officer</p>
-                <p className="text-xs text-muted-foreground pt-0.5 truncate">
-                  <Link
-                    href={`/organization/staffs/${data?.officer.id}`}
-                    className="transition hover:underline underline-offset-4 truncate"
-                  >
-                    {data?.officer.name}
-                  </Link>
-                </p>
-              </div>
-              <div className="grid">
-                <p className="text-sm font-semibold leading-none">
-                  Total Amount
-                </p>
-                <p
-                  title={data?.officer.unit.name}
-                  className="text-xs  pt-0.5 truncate font-semibold"
-                >
-                  {new Intl.NumberFormat("en-US", {
-                    currency: "GMD",
-                    style: "currency",
-                  }).format(
-                    data?.items.reduce((acc, item) => {
-                      const total = acc + Number(item.total_cost);
-                      return total;
-                    }, 0) || 0
-                  )}
-                </p>
-              </div>
-              <div className="grid">
-                <p className="text-sm font-semibold leading-none">Department</p>
-                <p
-                  title={data?.officer.department.name}
-                  className="text-xs text-muted-foreground pt-0.5 truncate"
-                >
-                  <Link
-                    href={`/organization/staffs/${data?.officer.department.id}`}
-                    className="transition hover:underline underline-offset-4 truncate"
-                  >
-                    {data?.officer.department.name}
-                  </Link>
-                </p>
-              </div>
+      <div className="grid gap-4 sm:grid-cols-3 md:grid-cols-4 grid-cols-2 w-full pt-4">
+        <div className="grid">
+          <p className="text-sm font-semibold leading-none">Reference ID</p>
+          <p className="text-xs text-muted-foreground pt-0.5 truncate">
+            {data && generate_unique_id("REQ", data.id)}
+          </p>
+        </div>
+        <div className="grid">
+          <p className="text-sm font-semibold leading-none">Officer</p>
+          <p className="text-xs text-muted-foreground pt-0.5 truncate">
+            <Link
+              href={`/organization/staffs/${data?.officer.id}`}
+              className="transition hover:underline underline-offset-4 truncate"
+            >
+              {data?.officer.name}
+            </Link>
+          </p>
+        </div>
+        <div className="grid">
+          <p className="text-sm font-semibold leading-none">Total Amount</p>
+          <p
+            title={data?.officer.unit.name}
+            className="text-xs  pt-0.5 truncate font-semibold"
+          >
+            {new Intl.NumberFormat("en-US", {
+              currency: "GMD",
+              style: "currency",
+            }).format(
+              data?.items.reduce((acc, item) => {
+                const total = acc + Number(item.total_cost);
+                return total;
+              }, 0) || 0
+            )}
+          </p>
+        </div>
+        <div className="grid">
+          <p className="text-sm font-semibold leading-none">Department</p>
+          <p
+            title={data?.officer.department.name}
+            className="text-xs text-muted-foreground pt-0.5 truncate"
+          >
+            <Link
+              href={`/organization/staffs/${data?.officer.department.id}`}
+              className="transition hover:underline underline-offset-4 truncate"
+            >
+              {data?.officer.department.name}
+            </Link>
+          </p>
+        </div>
 
-              <div className="grid">
-                <p className="text-xs font-semibold leading-none">
-                  Procurement Method
-                </p>
-                <p className="text-sm text-muted-foreground pt-0.5 uppercase">
-                  {data?.approval.procurement_method}
-                </p>
-              </div>
+        <div className="grid">
+          <p className="text-xs font-semibold leading-none">
+            Procurement Method
+          </p>
+          <p className="text-sm text-muted-foreground pt-0.5 uppercase">
+            {data?.approval.procurement_method}
+          </p>
+        </div>
 
-              <div className="grid">
-                <p className="text-sm font-semibold leading-none">
-                  Date Issued
-                </p>
-                <p
-                  title={data?.created_date}
-                  className="text-xs text-muted-foreground pt-0.5 truncate"
-                >
-                  {data?.created_date &&
-                    format(new Date(data?.created_date), "PPp")}
-                </p>
-              </div>
-              <div className="grid">
-                <p className="text-sm font-semibold leading-none">
-                  Last Modified
-                </p>
-                <p
-                  title={data?.created_date}
-                  className="text-xs text-muted-foreground pt-0.5 truncate"
-                >
-                  {data?.created_date &&
-                    format(new Date(data?.last_modified), "PPp")}
-                </p>
-              </div>
-              <div className="grid">
-                <p className="text-sm font-semibold leading-none">
-                  Request Type
-                </p>
-                <p
-                  title={data?.request_type}
-                  className="text-xs text-muted-foreground pt-0.5 truncate"
-                >
-                  {data?.request_type || "N/A"}
-                </p>
-              </div>
-            </div>
-          </AccordionContent>
-        </AccordionItem>
-      </Accordion>
-      <Accordion type="single" defaultValue="items" collapsible>
+        <div className="grid">
+          <p className="text-sm font-semibold leading-none">Date Issued</p>
+          <p
+            title={data?.created_date}
+            className="text-xs text-muted-foreground pt-0.5 truncate"
+          >
+            {data?.created_date && format(new Date(data?.created_date), "PPp")}
+          </p>
+        </div>
+        <div className="grid">
+          <p className="text-sm font-semibold leading-none">Last Modified</p>
+          <p
+            title={data?.created_date}
+            className="text-xs text-muted-foreground pt-0.5 truncate"
+          >
+            {data?.created_date && format(new Date(data?.last_modified), "PPp")}
+          </p>
+        </div>
+        <div className="grid">
+          <p className="text-sm font-semibold leading-none">Request Type</p>
+          <p
+            title={data?.request_type}
+            className="text-xs text-muted-foreground pt-0.5 truncate"
+          >
+            {data?.request_type || "N/A"}
+          </p>
+        </div>
+      </div>
+      <Accordion type="multiple" defaultValue={["items", "approvals"]}>
         <AccordionItem value="items">
           <AccordionTrigger>Requisition Items</AccordionTrigger>
           <AccordionContent className="transition duration-700 pb-6">
             <TabularData
-              plane
-              wrapperClassName="min-h-[15svh]"
+              plain
               loading={loading}
               data={data?.items}
+              wrapperClassName={cn(
+                "border border-t-none min-h-[15svh]",
+                !loading && "min-h-[0px]"
+              )}
+              rowClassName="divide-x"
+              headerClassName="divide-x"
+              headerCellClassName="text-sm text-foreground"
               columns={itemsColumns}
             />
           </AccordionContent>
         </AccordionItem>
-        <AccordionItem value="approvals">
-          <AccordionTrigger>Approval Records</AccordionTrigger>
-          <AccordionContent className="transition duration-700 pb-6">
-            <ApprovalDetails user={user} data={data} loading={loading} />
-          </AccordionContent>
-        </AccordionItem>
+        {!withoutApprovals && (
+          <AccordionItem value="approvals">
+            <AccordionTrigger>Approval Records</AccordionTrigger>
+            <AccordionContent className="transition duration-700 pb-6">
+              <ApprovalDetails user={user} data={data} loading={loading} />
+            </AccordionContent>
+          </AccordionItem>
+        )}
       </Accordion>
     </>
   );

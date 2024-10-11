@@ -3,7 +3,7 @@ import React from "react";
 import { Button } from "@/Components/ui/button";
 import { formatNumberAsCurrency } from "@/lib/helpers/transformations";
 import Approval from "./Approval";
-import EditRequisition from "./EditRequisition";
+import AddOrEditRequisition from "./AddOrEditRequisition";
 import ViewRequisitionDetails from "./RequisitionModal";
 import ViewApproval from "./ViewApproval";
 
@@ -99,7 +99,7 @@ export default function RequisitionCard({
           {requisition.approval.editable && (
             <>
               {requisition.changeable && (
-                <EditRequisition requisition={requisition} user={user} />
+                <AddOrEditRequisition requisition={requisition} user={user} />
               )}
             </>
           )}

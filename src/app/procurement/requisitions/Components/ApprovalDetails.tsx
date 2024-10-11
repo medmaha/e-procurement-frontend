@@ -5,6 +5,8 @@ import { Button } from "@/Components/ui/button";
 import { ColumnDef } from "@tanstack/react-table";
 import { EyeIcon } from "lucide-react";
 import TabularData from "@/Components/widget/TabularData";
+import { cn } from "@/lib/ui/utils";
+import Link from "next/link";
 
 type Props = {
   user: AuthUser;
@@ -22,6 +24,13 @@ export default function ApprovalDetails({ user, data, loading }: Props) {
       loading={loading}
       columns={columns}
       data={approvalsToList(data?.approval)}
+      wrapperClassName={cn(
+        "border border-t-none min-h-[15svh]",
+        !loading && "min-h-[0px]"
+      )}
+      rowClassName="divide-x"
+      headerClassName="divide-x bg-secondary/50"
+      headerCellClassName="text-sm text-foreground"
     />
   );
 }
@@ -53,6 +62,17 @@ const requisitionApprovalColumns = (user: AuthUser): ColumnDef<Approval>[] => [
   {
     header: "Officer",
     accessorKey: "officer?.name",
+    cell: ({ row: { original } }) => {
+      if (original?.officer) {
+        <Link
+          href={"/organization/staffs/" + original?.officer?.id}
+          className={"transition hover:underline underline-offset-4 truncate"}
+        >
+          {original?.officer?.name}
+        </Link>;
+      }
+      return <p className="text-xs line-clamp-2">N/A</p>;
+    },
   },
   {
     header: "Status",
@@ -70,7 +90,7 @@ const requisitionApprovalColumns = (user: AuthUser): ColumnDef<Approval>[] => [
               : "outline"
           }
         >
-          {approval}
+          {approval || "Pending"}
         </Badge>
       );
     },

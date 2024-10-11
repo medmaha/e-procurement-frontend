@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import EditRequisition from "./Components/EditRequisition";
+import AddOrEditRequisition from "./Components/AddOrEditRequisition";
 import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
 import { LayoutGridIcon, SearchIcon, SheetIcon } from "lucide-react";
@@ -48,9 +48,9 @@ export default function Header({ user, permissions, ...props }: Props) {
           </Button>
         </div>
         {permissions.create && (
-          <EditRequisition user={user}>
+          <AddOrEditRequisition user={user}>
             <Button className="">+ New Requisition</Button>
-          </EditRequisition>
+          </AddOrEditRequisition>
         )}
       </div>
     </div>

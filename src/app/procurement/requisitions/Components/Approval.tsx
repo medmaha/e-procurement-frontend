@@ -26,16 +26,21 @@ import CACHE from "@/lib/caching";
 import {
   approveRequisition,
   getDepartmentProcurementPlanItems,
+  retrieveRequisition,
 } from "../actions";
 import ViewDepartmentPlans from "./ViewDepartmentPlans";
 import ActionConfirmation from "@/Components/ActionConfirmation";
+import RequisitionDetail from "./RequisitionDetail";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 type Props = {
   user: AuthUser;
   from?: "Unit" | "Department" | "Finance" | "Procurement";
   requisition: Requisition;
-  children: ReactNode;
+  children?: ReactNode;
   department: any;
+  autoOpen?: boolean;
+  onClose?: () => void;
 };
 
 export default function Approval({
@@ -44,23 +49,38 @@ export default function Approval({
   requisition,
   ...props
 }: Props) {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(props.autoOpen || false);
   const [data, setData] = useState(requisition);
-
-  const onRequisitionFetch = useCallback((payload: Requisition) => {
-    setData((data) => {
-      return { ...data, ...payload };
-    });
-  }, []);
 
   useEffect(() => {
     setData(requisition);
   }, [requisition]);
 
+  const requisitionQuery = useQuery({
+    enabled: isOpen,
+    staleTime: Infinity,
+    queryKey: ["requisition", requisition.id],
+    queryFn: async () => {
+      const response = await retrieveRequisition(String(requisition.id));
+      if (response.success) {
+        return response.data as RequisitionRetrieve;
+      }
+      throw response;
+    },
+  });
+
+  const queryClient = useQueryClient();
+
   if (!requisition.approval.apposable) return null;
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog
+      open={isOpen}
+      onOpenChange={(opened) => {
+        setIsOpen(opened);
+        !opened && props.onClose?.();
+      }}
+    >
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="max-w-[1200px] mx-auto p-0">
         <DialogHeader className="px-6 pt-4 border-b pb-2">
@@ -74,6 +94,12 @@ export default function Approval({
         </DialogHeader>
         {isOpen && (
           <div className="max-h-[80dvh] overflow-hidden overflow-y-auto px-6">
+            <RequisitionDetail
+              user={user}
+              withoutApprovals
+              data={requisitionQuery.data}
+              loading={requisitionQuery.isLoading}
+            />
             <ApprovalForm
               department={props.department}
               data={data?.approval}
@@ -83,6 +109,15 @@ export default function Approval({
               closeDialog={() => {
                 setIsOpen(false);
                 CACHE.delete(String(requisition.id));
+              }}
+              invalidateQueries={async () => {
+                await queryClient.invalidateQueries({
+                  queryKey: ["requisition", requisition.id],
+                });
+                queryClient.invalidateQueries({
+                  queryKey: ["requisitions"],
+                  exact: false,
+                });
               }}
             />
           </div>
@@ -99,6 +134,7 @@ type Props3 = {
   closeDialog: () => void;
   isOpen: boolean;
   department: any;
+  invalidateQueries: any;
 };
 
 function getUserApprovalFields(
@@ -131,19 +167,17 @@ function ApprovalForm({ user, data, officer, isOpen, ...props }: Props3) {
   async function submitForm(formData: FormData, action: "approve" | "reject") {
     const json = Object.fromEntries(formData.entries());
     json["approve"] = action === "approve" ? "on" : "No";
-    const response = await approveRequisition(
-      {
-        approval_id: data.id,
-        [data.stage.toLowerCase()]: getUserApprovalFields(data.stage, json),
-      },
-      location.pathname
-    );
+    const response = await approveRequisition({
+      approval_id: data.id,
+      [data.stage.toLowerCase()]: getUserApprovalFields(data.stage, json),
+    });
 
     if (!response.success) {
       toast.error(response.message);
       return;
     }
 
+    await props.invalidateQueries();
     props.closeDialog();
     toast.success(response.message);
   }
