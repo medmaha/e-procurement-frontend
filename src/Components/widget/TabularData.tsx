@@ -37,6 +37,7 @@ type Props<T> = {
   headerClassName?: string;
   headerCellClassName?: string;
   wrapperClassName?: string;
+  loaderClassName?: string;
 };
 
 function TabularData<T = any>({ data, columns, loading, ...props }: Props<T>) {
@@ -73,7 +74,7 @@ function TabularData<T = any>({ data, columns, loading, ...props }: Props<T>) {
   return (
     <div
       className={cn(
-        "w-full min-h-[30svh] relative border",
+        "w-full min-h-[25svh] relative border",
         props.wrapperClassName
       )}
     >
@@ -139,7 +140,12 @@ function TabularData<T = any>({ data, columns, loading, ...props }: Props<T>) {
       </Table>
       {loading && (
         <div className="absolute z-10 flex items-center justify-center backdrop-blur-[2px] bottom-0 left-0 w-full md:h-[calc(100%-55px)] h-[calc(100%-45px)]">
-          <Loader2 className="w-12 h-12 animate-spin dark:text-primary/50 text-primary stroke-[2px] md:stroke-[3px]" />
+          <Loader2
+            className={cn(
+              "w-12 h-12 animate-spin dark:text-primary/50 text-primary stroke-[2px] md:stroke-[3px]",
+              props.loaderClassName
+            )}
+          />
         </div>
       )}
       {!loading && table.getRowModel().rows?.length < 1 && (

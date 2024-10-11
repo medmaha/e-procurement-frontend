@@ -38,7 +38,7 @@ type Props = {
   from?: "Unit" | "Department" | "Finance" | "Procurement";
   requisition: Requisition;
   children?: ReactNode;
-  department: any;
+  department?: any;
   autoOpen?: boolean;
   onClose?: () => void;
 };
@@ -57,7 +57,7 @@ export default function Approval({
   }, [requisition]);
 
   const requisitionQuery = useQuery({
-    enabled: isOpen,
+    enabled: isOpen && !!requisition?.id,
     staleTime: Infinity,
     queryKey: ["requisition", requisition.id],
     queryFn: async () => {
@@ -101,7 +101,7 @@ export default function Approval({
               loading={requisitionQuery.isLoading}
             />
             <ApprovalForm
-              department={props.department}
+              department={requisition.officer.department}
               data={data?.approval}
               user={user}
               officer={requisition.officer}

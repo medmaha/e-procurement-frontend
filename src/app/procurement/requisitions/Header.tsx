@@ -1,6 +1,4 @@
 "use client";
-import React from "react";
-import AddOrEditRequisition from "./Components/AddOrEditRequisition";
 import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
 import { LayoutGridIcon, SearchIcon, SheetIcon } from "lucide-react";
@@ -10,6 +8,7 @@ type Props = {
   gridView: boolean;
   setGridView: (value: boolean) => void;
   permissions: AuthPerm;
+  createRequisition: () => void;
 };
 
 export default function Header({ user, permissions, ...props }: Props) {
@@ -48,9 +47,9 @@ export default function Header({ user, permissions, ...props }: Props) {
           </Button>
         </div>
         {permissions.create && (
-          <AddOrEditRequisition user={user}>
-            <Button className="">+ New Requisition</Button>
-          </AddOrEditRequisition>
+          <Button onClick={props.createRequisition} className="">
+            + New Requisition
+          </Button>
         )}
       </div>
     </div>

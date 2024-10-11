@@ -5,7 +5,6 @@ import { ReactNode, useState } from "react";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -17,17 +16,17 @@ import RequisitionDetail from "./RequisitionDetail";
 type Props = {
   user: AuthUser;
   children?: ReactNode;
-  defaultOpen?: boolean;
+  autoOpen?: boolean;
   onClose?: () => void;
   requisition: Requisition;
 };
 
 export default function RequisitionModal(props: Props) {
   const { user, children } = props;
-  const [isOpen, setIsOpen] = useState(props.defaultOpen || false);
+  const [isOpen, setIsOpen] = useState(props.autoOpen || false);
 
   const requisitionQuery = useQuery({
-    enabled: isOpen,
+    enabled: isOpen && !!props.requisition?.id,
     staleTime: Infinity,
     queryKey: ["requisition", props.requisition.id],
     queryFn: async () => {

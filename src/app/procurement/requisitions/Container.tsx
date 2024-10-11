@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import { useState, lazy } from "react";
 import AddOrEditRequisition from "./Components/AddOrEditRequisition";
 import RequisitionCard from "./Components/RequisitionCard";
 import RequisitionsTable from "./Components/RequisitionTable";
@@ -7,17 +7,25 @@ import { Button } from "@/Components/ui/button";
 import Header from "./Header";
 import { useQuery } from "@tanstack/react-query";
 import { actionRequest } from "@/lib/utils/actionRequest";
-import Approval from "./Components/Approval";
 
 type Props = {
   readonly user: AuthUser;
 };
 
+const LazyApprovalComponent = lazy(() => import("./Components/Approval"));
+const LazyRequisitionEditComponent = lazy(
+  () => import("./Components/AddOrEditRequisition")
+);
+const LazyRequisitionModalComponent = lazy(
+  () => import("./Components/RequisitionModal")
+);
+
 export default function Container({ user }: Props) {
   const [gridView, setGridView] = useState(false);
   const [permissions, setPermissions] = useState<AuthPerm>();
-  const [selectedForUpdate, setSelectedForUpdate] = useState<Requisition>();
-  const [selectedForApproval, setSelectedForApproval] = useState<Requisition>();
+
+  const [LazyComponent, setLazyComponent] = useState<any>();
+  const [selectedRequisition, setSelectedRequisition] = useState<Requisition>();
 
   const requisitionsQuery = useQuery({
     staleTime: Infinity,
@@ -37,21 +45,15 @@ export default function Container({ user }: Props) {
 
   return (
     <>
-      {selectedForUpdate && (
-        <AddOrEditRequisition
+      {LazyComponent && (
+        <LazyComponent
           autoOpen
           user={user}
-          onClose={() => setSelectedForUpdate(undefined)}
-          requisition={selectedForUpdate}
-        />
-      )}
-      {selectedForApproval && (
-        <Approval
-          autoOpen
-          user={user}
-          onClose={() => setSelectedForApproval(undefined)}
-          requisition={selectedForApproval}
-          department={selectedForApproval.officer.department}
+          onClose={() => {
+            setLazyComponent(undefined);
+            setSelectedRequisition(undefined);
+          }}
+          requisition={selectedRequisition}
         />
       )}
 
@@ -60,6 +62,10 @@ export default function Container({ user }: Props) {
         permissions={permissions || ({} as any)}
         gridView={gridView}
         setGridView={setGridView}
+        createRequisition={() => {
+          setSelectedRequisition(undefined);
+          setLazyComponent(LazyRequisitionEditComponent);
+        }}
       />
 
       {!gridView && (
@@ -67,21 +73,30 @@ export default function Container({ user }: Props) {
           user={user}
           loading={requisitionsQuery.isLoading}
           requisitions={requisitionsQuery.data || []}
-          updateRequisition={(requisition_id) => {
-            alert(requisition_id);
-            setSelectedForUpdate(
+          viewRequisition={(requisition_id) => {
+            setSelectedRequisition(
               requisitionsQuery.data?.find(
                 (r) => r.id.toString() === requisition_id.toString()
               )
             );
+            setLazyComponent(LazyRequisitionModalComponent);
           }}
-          approveRequisition={(requisition_id) =>
-            setSelectedForApproval(
+          updateRequisition={(requisition_id) => {
+            setSelectedRequisition(
               requisitionsQuery.data?.find(
                 (r) => r.id.toString() === requisition_id.toString()
               )
-            )
-          }
+            );
+            setLazyComponent(LazyRequisitionEditComponent);
+          }}
+          approveRequisition={(requisition_id) => {
+            setSelectedRequisition(
+              requisitionsQuery.data?.find(
+                (r) => r.id.toString() === requisition_id.toString()
+              )
+            );
+            setLazyComponent(LazyApprovalComponent);
+          }}
         />
       )}
 
@@ -93,8 +108,31 @@ export default function Container({ user }: Props) {
                 <RequisitionCard
                   key={requisition.id}
                   user={user}
-                  department={requisition.officer.department}
                   requisition={requisition}
+                  viewRequisition={(requisition_id) => {
+                    setSelectedRequisition(
+                      requisitionsQuery.data?.find(
+                        (r) => r.id.toString() === requisition_id.toString()
+                      )
+                    );
+                    setLazyComponent(LazyRequisitionModalComponent);
+                  }}
+                  updateRequisition={(requisition_id) => {
+                    setSelectedRequisition(
+                      requisitionsQuery.data?.find(
+                        (r) => r.id.toString() === requisition_id.toString()
+                      )
+                    );
+                    setLazyComponent(LazyRequisitionEditComponent);
+                  }}
+                  approveRequisition={(requisition_id) => {
+                    setSelectedRequisition(
+                      requisitionsQuery.data?.find(
+                        (r) => r.id.toString() === requisition_id.toString()
+                      )
+                    );
+                    setLazyComponent(LazyApprovalComponent);
+                  }}
                 />
               ))}
             </div>

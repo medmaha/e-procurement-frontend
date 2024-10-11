@@ -1,22 +1,20 @@
 import Link from "next/link";
-import React from "react";
 import { Button } from "@/Components/ui/button";
 import { formatNumberAsCurrency } from "@/lib/helpers/transformations";
-import Approval from "./Approval";
-import AddOrEditRequisition from "./AddOrEditRequisition";
-import ViewRequisitionDetails from "./RequisitionModal";
 import ViewApproval from "./ViewApproval";
 
 type Props = {
   user: AuthUser;
-  department: any;
   requisition: Requisition;
+  readonly viewRequisition?: (requisition_id: string) => void;
+  readonly updateRequisition?: (requisition_id: string) => void;
+  readonly approveRequisition?: (requisition_id: string) => void;
 };
 
 export default function RequisitionCard({
   user,
   requisition,
-  department,
+  ...props
 }: Props) {
   return (
     <div
@@ -37,14 +35,13 @@ export default function RequisitionCard({
             </span>
           )}
         </div>
-        <ViewRequisitionDetails user={user} requisition={requisition}>
-          <Button
-            variant={"link"}
-            className="font-semibold underline opacity-80 hover:opacity-100 underline-offset-2 hover:underline-offset-4 transition text-primary text-sm h-max p-1 px-3"
-          >
-            View
-          </Button>
-        </ViewRequisitionDetails>
+        <Button
+          variant={"link"}
+          onClick={() => props.viewRequisition?.(requisition.id.toString())}
+          className="font-semibold underline opacity-80 hover:opacity-100 underline-offset-2 hover:underline-offset-4 transition text-primary text-sm h-max p-1 px-3"
+        >
+          View
+        </Button>
         {/* <ViewRequisition requisition={requisition} /> */}
       </h3>
       <p className="text-muted-foreground text-sm">
@@ -99,21 +96,27 @@ export default function RequisitionCard({
           {requisition.approval.editable && (
             <>
               {requisition.changeable && (
-                <AddOrEditRequisition requisition={requisition} user={user} />
+                <Button
+                  size={"sm"}
+                  onClick={() =>
+                    props.updateRequisition?.(requisition.id.toString())
+                  }
+                >
+                  Edit
+                </Button>
               )}
             </>
           )}
           {requisition.approval.apposable && (
             <div className="pt">
-              <Approval
-                department={department}
-                user={user}
-                requisition={requisition}
+              <Button
+                size={"sm"}
+                onClick={() =>
+                  props.approveRequisition?.(requisition.id.toString())
+                }
               >
-                <Button size={"sm"} className="">
-                  Approve
-                </Button>
-              </Approval>
+                Approve
+              </Button>
             </div>
           )}
         </div>

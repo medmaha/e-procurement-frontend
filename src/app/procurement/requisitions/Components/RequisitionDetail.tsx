@@ -36,7 +36,7 @@ export default function RequisitionDetail(props: Props) {
         <div className="grid">
           <p className="text-sm font-semibold leading-none">Reference ID</p>
           <p className="text-xs text-muted-foreground pt-0.5 truncate">
-            {data && generate_unique_id("REQ", data.id)}
+            {data && generate_unique_id("REQ", data?.id)}
           </p>
         </div>
         <div className="grid">
@@ -46,14 +46,14 @@ export default function RequisitionDetail(props: Props) {
               href={`/organization/staffs/${data?.officer.id}`}
               className="transition hover:underline underline-offset-4 truncate"
             >
-              {data?.officer.name}
+              {data?.officer?.name}
             </Link>
           </p>
         </div>
         <div className="grid">
           <p className="text-sm font-semibold leading-none">Total Amount</p>
           <p
-            title={data?.officer.unit.name}
+            title={data?.officer?.unit?.name}
             className="text-xs  pt-0.5 truncate font-semibold"
           >
             {new Intl.NumberFormat("en-US", {
@@ -70,14 +70,14 @@ export default function RequisitionDetail(props: Props) {
         <div className="grid">
           <p className="text-sm font-semibold leading-none">Department</p>
           <p
-            title={data?.officer.department.name}
+            title={data?.officer?.department?.name}
             className="text-xs text-muted-foreground pt-0.5 truncate"
           >
             <Link
-              href={`/organization/staffs/${data?.officer.department.id}`}
+              href={`/organization/staffs/${data?.officer?.department.id}`}
               className="transition hover:underline underline-offset-4 truncate"
             >
-              {data?.officer.department.name}
+              {data?.officer?.department?.name}
             </Link>
           </p>
         </div>
@@ -87,7 +87,7 @@ export default function RequisitionDetail(props: Props) {
             Procurement Method
           </p>
           <p className="text-sm text-muted-foreground pt-0.5 uppercase">
-            {data?.approval.procurement_method}
+            {data?.approval?.procurement_method}
           </p>
         </div>
 
@@ -131,6 +131,7 @@ export default function RequisitionDetail(props: Props) {
                 "border border-t-none min-h-[15svh]",
                 !loading && "min-h-[0px]"
               )}
+              loaderClassName="stroke-2 md:stroke-[2px]"
               rowClassName="divide-x"
               headerClassName="divide-x"
               headerCellClassName="text-sm text-foreground"

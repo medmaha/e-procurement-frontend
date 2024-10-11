@@ -17,21 +17,23 @@ type Props = {
 export default function ApprovalDetails({ user, data, loading }: Props) {
   const columns = useMemo(() => {
     return requisitionApprovalColumns(user);
-  }, [user]);
+  }, [user, data]);
 
   return (
-    <TabularData
-      loading={loading}
-      columns={columns}
-      data={approvalsToList(data?.approval)}
-      wrapperClassName={cn(
-        "border border-t-none min-h-[15svh]",
-        !loading && "min-h-[0px]"
-      )}
-      rowClassName="divide-x"
-      headerClassName="divide-x bg-secondary/50"
-      headerCellClassName="text-sm text-foreground"
-    />
+    <>
+      <TabularData
+        loading={loading}
+        columns={columns}
+        data={approvalsToList(data?.approval)}
+        wrapperClassName={cn(
+          "border border-t-none min-h-[15svh]",
+          !loading && "min-h-[0px]"
+        )}
+        rowClassName="divide-x"
+        headerClassName="divide-x bg-secondary/50"
+        headerCellClassName="text-sm text-foreground"
+      />
+    </>
   );
 }
 
@@ -40,15 +42,26 @@ const approvalsToList = (approval?: RequisitionRetrieveApproval) => {
     unit_approval,
     department_approval,
     procurement_approval,
-    status,
     finance_approval,
   } = approval || {};
 
   return [
-    unit_approval,
-    department_approval,
-    procurement_approval,
-    finance_approval,
+    { ...unit_approval, id: "unit_approval", name: "Unit Approval" },
+    {
+      ...department_approval,
+      id: "department_approval",
+      name: "Department Approval",
+    },
+    {
+      ...finance_approval,
+      id: "finance_approval",
+      name: "Finance Approval",
+    },
+    {
+      ...procurement_approval,
+      id: "procurement_approval",
+      name: "Procurement Approval",
+    },
   ];
 };
 
@@ -62,16 +75,21 @@ const requisitionApprovalColumns = (user: AuthUser): ColumnDef<Approval>[] => [
   {
     header: "Officer",
     accessorKey: "officer?.name",
-    cell: ({ row: { original } }) => {
-      if (original?.officer) {
-        <Link
-          href={"/organization/staffs/" + original?.officer?.id}
-          className={"transition hover:underline underline-offset-4 truncate"}
-        >
-          {original?.officer?.name}
-        </Link>;
+    cell: ({ row }) => {
+      const stageOfficer = row.original?.officer;
+      if (!stageOfficer) {
+        return "N/A";
       }
-      return <p className="text-xs line-clamp-2">N/A</p>;
+      return (
+        <Link
+          href={"/organization/staffs/" + stageOfficer?.id}
+          className={
+            "transition hover:underline underline-offset-4 truncate hover:text-primary"
+          }
+        >
+          {stageOfficer.name}
+        </Link>
+      );
     },
   },
   {
