@@ -37,14 +37,13 @@ export default function AddOrEditRequisition(props: Props) {
     },
   });
 
+  const closeDialog = (opened: boolean) => {
+    setIsOpen(opened);
+    !opened && props.onClose?.();
+  };
+
   return (
-    <Dialog
-      open={isOpen}
-      onOpenChange={(opened) => {
-        setIsOpen(opened);
-        !opened && props.onClose?.();
-      }}
-    >
+    <Dialog open={isOpen} onOpenChange={closeDialog}>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="max-w-[1200px] mx-auto">
         <DialogHeader>
@@ -61,7 +60,8 @@ export default function AddOrEditRequisition(props: Props) {
           user={user}
           loading={requisitionQuery.isLoading}
           requisition={requisitionQuery.data}
-          closeDialog={() => setIsOpen(false)}
+          defaultItemsCount={requisition?.items.length}
+          closeDialog={() => closeDialog(false)}
         />
       </DialogContent>
     </Dialog>

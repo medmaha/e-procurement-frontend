@@ -1,5 +1,5 @@
 "use client";
-import { useState, lazy } from "react";
+import { useState, lazy, Suspense } from "react";
 import AddOrEditRequisition from "./Components/AddOrEditRequisition";
 import RequisitionCard from "./Components/RequisitionCard";
 import RequisitionsTable from "./Components/RequisitionTable";
@@ -46,15 +46,17 @@ export default function Container({ user }: Props) {
   return (
     <>
       {LazyComponent && (
-        <LazyComponent
-          autoOpen
-          user={user}
-          onClose={() => {
-            setLazyComponent(undefined);
-            setSelectedRequisition(undefined);
-          }}
-          requisition={selectedRequisition}
-        />
+        <Suspense>
+          <LazyComponent
+            autoOpen
+            user={user}
+            onClose={() => {
+              setLazyComponent(undefined);
+              setSelectedRequisition(undefined);
+            }}
+            requisition={selectedRequisition}
+          />
+        </Suspense>
       )}
 
       <Header

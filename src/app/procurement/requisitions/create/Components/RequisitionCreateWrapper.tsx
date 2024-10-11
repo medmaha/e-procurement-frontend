@@ -1,5 +1,5 @@
 "use client";
-import { Loader2, Plus, TrendingUpIcon } from "lucide-react";
+import { Loader2, Plus } from "lucide-react";
 import { redirect } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "react-toastify";
@@ -19,28 +19,14 @@ type Props = {
   closeDialog?: () => void;
   loading?: boolean;
   redirectToView?: boolean;
+  defaultItemsCount?: number;
 };
-
-function getInitialItems(requisition?: RequisitionRetrieve) {
-  if (!requisition) {
-    return [generateHex(8), generateHex(8)];
-  }
-  const items = [];
-  for (let i = 0; i < requisition.items.length; i++) {
-    items.push(generateHex(8));
-  }
-  if (items.length < 1) {
-    items.push(generateHex(8));
-  }
-  if (items.length < 2) {
-    items.push(generateHex(8));
-  }
-  return items;
-}
 
 export default function RequisitionCreateWrapper({ user, ...props }: Props) {
   const { requisition, closeDialog, redirectToView } = props;
-  const [items, setItems] = useState(getInitialItems(props.requisition));
+  const [items, setItems] = useState(
+    Array<string>(props.defaultItemsCount || 2).fill(generateHex(8))
+  );
   const [totalCosts, setTotalCosts] = useState<{ [idx: number]: number }>({});
 
   const totalSum = useMemo(() => {

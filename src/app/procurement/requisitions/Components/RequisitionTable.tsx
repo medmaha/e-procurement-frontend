@@ -81,7 +81,10 @@ const getColumns = (
       accessorKey: "items",
       header: "Items",
       cell: ({ row }) => (
-        <p className="max-w-[150px] truncate">
+        <p
+          title={row.original.items.map((i) => i.description).join(", ")}
+          className="max-w-[25ch] truncate"
+        >
           <span className="capitalize">
             {row.original.items[0].description}
           </span>
@@ -170,38 +173,44 @@ const getColumns = (
     {
       id: "action",
       header: "Action",
-      cell: ({ row }) => (
-        <div className="flex items-center gap-1">
-          <Button
-            onClick={() => viewRequisition?.(row.original.id)}
-            size={"sm"}
-            title="Edit Requisition"
-            variant={"outline"}
-          >
-            <EyeIcon className="w-4 h-4" />
-            View
-          </Button>
-          {user.profile_id === row.original.officer.id && (
-            <Button
-              onClick={() => updateRequisition?.(row.original.id)}
-              size={"sm"}
-              title="View Requisition"
-              variant={"secondary"}
-            >
-              <EditIcon className="w-4 h-4" />
-              Edit
-            </Button>
-          )}
+      cell: ({ row }) => {
+        const editable = !["accepted", "rejected"].includes(
+          row.original.approval.unit_approval.status.toLowerCase()
+        );
 
-          {row.original.approval.apposable && (
+        return (
+          <div className="flex items-center gap-1">
             <Button
-              onClick={() => approveRequisition?.(row.original.id)}
+              onClick={() => viewRequisition?.(row.original.id)}
               size={"sm"}
+              title="Edit Requisition"
+              variant={"outline"}
             >
-              Approve
+              <EyeIcon className="w-4 h-4" />
+              View
             </Button>
-          )}
-        </div>
-      ),
+            {editable && (
+              <Button
+                onClick={() => updateRequisition?.(row.original.id)}
+                size={"sm"}
+                title="View Requisition"
+                variant={"secondary"}
+              >
+                <EditIcon className="w-4 h-4" />
+                Edit
+              </Button>
+            )}
+
+            {row.original.approval.apposable && (
+              <Button
+                onClick={() => approveRequisition?.(row.original.id)}
+                size={"sm"}
+              >
+                Approve
+              </Button>
+            )}
+          </div>
+        );
+      },
     },
   ] as Array<ColumnDef<Requisition>>;

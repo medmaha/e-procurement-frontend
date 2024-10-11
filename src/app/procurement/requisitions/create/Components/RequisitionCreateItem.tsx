@@ -119,7 +119,8 @@ export default function RequisitionCreateItem({
       </td>
       <td style={{ padding: 0 }} className="">
         <Input
-          defaultValue={data && Number(data.unit_cost)}
+          type="text"
+          defaultValue={data && Number(data.remark)}
           name={`${idx + 1}-remark`}
           className="bg-transparent rounded h-full w-full p-1 border-none"
         />
