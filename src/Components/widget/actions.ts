@@ -29,7 +29,7 @@ export async function getUnitSelection() {
 export async function getRequisitionSelection() {
   const response = await actionRequest({
     method: "get",
-    url: "/procurement/requisitions/select/",
+    url: "/procurement/requisitions/select/?rfq=true",
   });
 
   return response;

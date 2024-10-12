@@ -128,7 +128,7 @@ export default function RequisitionDetail(props: Props) {
               loading={loading}
               data={data?.items}
               wrapperClassName={cn(
-                "border border-t-none min-h-[15svh]",
+                "border border-t-none min-h-[100px]",
                 !loading && "min-h-[0px]"
               )}
               loaderClassName="stroke-2 md:stroke-[2px]"

@@ -1,5 +1,5 @@
 "use client";
-import { ReactNode, useCallback, useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { Button } from "@/Components/ui/button";
 import {
@@ -38,7 +38,6 @@ type Props = {
   from?: "Unit" | "Department" | "Finance" | "Procurement";
   requisition: Requisition;
   children?: ReactNode;
-  department?: any;
   autoOpen?: boolean;
   onClose?: () => void;
 };
@@ -70,8 +69,6 @@ export default function Approval({
   });
 
   const queryClient = useQueryClient();
-
-  if (!requisition.approval.apposable) return null;
 
   return (
     <Dialog

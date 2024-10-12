@@ -38,6 +38,7 @@ type Props<T> = {
   headerCellClassName?: string;
   wrapperClassName?: string;
   loaderClassName?: string;
+  emptyMessage?: string;
 };
 
 function TabularData<T = any>({ data, columns, loading, ...props }: Props<T>) {
@@ -125,7 +126,11 @@ function TabularData<T = any>({ data, columns, loading, ...props }: Props<T>) {
                   {row.getVisibleCells().map((cell) => (
                     <TableCell
                       key={cell.id}
-                      className={cn("p-2.5 text-xs", props.rowCellClassName)}
+                      className={cn(
+                        "p-2.5 text-xs",
+                        props.rowCellClassName,
+                        (cell as any).cellClassName
+                      )}
                     >
                       {flexRender(
                         cell.column.columnDef.cell,

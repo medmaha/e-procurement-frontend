@@ -1,7 +1,6 @@
 "use client";
 import { useState, lazy, Suspense } from "react";
 import AddOrEditRequisition from "./Components/AddOrEditRequisition";
-import RequisitionCard from "./Components/RequisitionCard";
 import RequisitionsTable from "./Components/RequisitionTable";
 import { Button } from "@/Components/ui/button";
 import Header from "./Header";
@@ -12,6 +11,7 @@ type Props = {
   readonly user: AuthUser;
 };
 
+const RequisitionCardLazy = lazy(() => import("./Components/RequisitionCard"));
 const LazyApprovalComponent = lazy(() => import("./Components/Approval"));
 const LazyRequisitionEditComponent = lazy(
   () => import("./Components/AddOrEditRequisition")
@@ -29,7 +29,7 @@ export default function Container({ user }: Props) {
 
   const requisitionsQuery = useQuery({
     staleTime: Infinity,
-    queryKey: ["requisitions"],
+    queryKey: ["requisitions", user?.meta?.id],
     queryFn: async () => {
       const response = await actionRequest<Requisition[]>({
         method: "get",
@@ -73,6 +73,7 @@ export default function Container({ user }: Props) {
       {!gridView && (
         <RequisitionsTable
           user={user}
+          permission={permissions}
           loading={requisitionsQuery.isLoading}
           requisitions={requisitionsQuery.data || []}
           viewRequisition={(requisition_id) => {
@@ -106,37 +107,39 @@ export default function Container({ user }: Props) {
         <>
           {requisitionsQuery.data && requisitionsQuery.data.length > 0 ? (
             <div className="mt-6 grid sm:grid-cols-2 sm:gap-6 gap-4">
-              {requisitionsQuery.data.map((requisition) => (
-                <RequisitionCard
-                  key={requisition.id}
-                  user={user}
-                  requisition={requisition}
-                  viewRequisition={(requisition_id) => {
-                    setSelectedRequisition(
-                      requisitionsQuery.data?.find(
-                        (r) => r.id.toString() === requisition_id.toString()
-                      )
-                    );
-                    setLazyComponent(LazyRequisitionModalComponent);
-                  }}
-                  updateRequisition={(requisition_id) => {
-                    setSelectedRequisition(
-                      requisitionsQuery.data?.find(
-                        (r) => r.id.toString() === requisition_id.toString()
-                      )
-                    );
-                    setLazyComponent(LazyRequisitionEditComponent);
-                  }}
-                  approveRequisition={(requisition_id) => {
-                    setSelectedRequisition(
-                      requisitionsQuery.data?.find(
-                        (r) => r.id.toString() === requisition_id.toString()
-                      )
-                    );
-                    setLazyComponent(LazyApprovalComponent);
-                  }}
-                />
-              ))}
+              <Suspense>
+                {requisitionsQuery.data.map((requisition) => (
+                  <RequisitionCardLazy
+                    key={requisition.id}
+                    user={user}
+                    requisition={requisition}
+                    viewRequisition={(requisition_id) => {
+                      setSelectedRequisition(
+                        requisitionsQuery.data?.find(
+                          (r) => r.id.toString() === requisition_id.toString()
+                        )
+                      );
+                      setLazyComponent(LazyRequisitionModalComponent);
+                    }}
+                    updateRequisition={(requisition_id) => {
+                      setSelectedRequisition(
+                        requisitionsQuery.data?.find(
+                          (r) => r.id.toString() === requisition_id.toString()
+                        )
+                      );
+                      setLazyComponent(LazyRequisitionEditComponent);
+                    }}
+                    approveRequisition={(requisition_id) => {
+                      setSelectedRequisition(
+                        requisitionsQuery.data?.find(
+                          (r) => r.id.toString() === requisition_id.toString()
+                        )
+                      );
+                      setLazyComponent(LazyApprovalComponent);
+                    }}
+                  />
+                ))}
+              </Suspense>
             </div>
           ) : (
             !requisitionsQuery.isLoading && (

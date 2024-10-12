@@ -178,6 +178,8 @@ const getColumns = (
           row.original.approval.unit_approval.status.toLowerCase()
         );
 
+        const stage = `${row.original.approval.stage?.toLowerCase()}_approval`;
+
         return (
           <div className="flex items-center gap-1">
             <Button
@@ -193,9 +195,15 @@ const getColumns = (
               <Button
                 onClick={() => updateRequisition?.(row.original.id)}
                 size={"sm"}
-                title="View Requisition"
+                title="Edit Requisition"
                 variant={"secondary"}
               >
+                <EditIcon className="w-4 h-4" />
+                Edit
+              </Button>
+            )}
+            {!editable && (
+              <Button disabled size={"sm"} variant={"outline"}>
                 <EditIcon className="w-4 h-4" />
                 Edit
               </Button>

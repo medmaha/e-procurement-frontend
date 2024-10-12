@@ -1,4 +1,4 @@
-import { Check, Loader2, X } from "lucide-react";
+import { Check, Loader2, SearchIcon, X } from "lucide-react";
 import React from "react";
 import Page404 from "@/app/not-found";
 import ClientSitePage from "@/Components/ui/ClientSitePage";
@@ -9,6 +9,8 @@ import RFQTable from "./Component/RFQTable";
 import FilterByYear from "./Component/FilterByYear";
 import FilterByVendor from "./Component/FilterBySearch";
 import { returnTo, searchParamsToSearchString } from "@/lib/server/urls";
+import { Input } from "@/Components/ui/input";
+import { Button } from "@/Components/ui/button";
 
 export const metadata = {
   title: "RFQ | E-Procurement",
@@ -53,37 +55,7 @@ export default async function Page(props: PageProps) {
               : "grid flex-1"
           } h-full items-center`}
         >
-          <div className="">
-            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold">
-              Requests for Quotation
-            </h2>
-          </div>
-          <div className="grid px-2 pt-1">
-            {activeRFQ.length > 0 && (
-              <p className="text-muted-foreground inline-flex items-center gap-2 text-sm">
-                <span className="inline-flex items-center gap-4">
-                  <Check size={"16"} className="text-primary" />
-                  <span className="text-xs">
-                    <span className="font-bold">{activeRFQ.length}</span>{" "}
-                    Published {pluralize("RFQ", activeRFQ.length)}
-                  </span>
-                </span>
-              </p>
-            )}
-            {inactiveRFQ.length > 0 && (
-              <p className="text-muted-foreground inline-flex items-center gap-2 text-sm">
-                <span className="inline-flex items-center gap-4">
-                  <Loader2 size={"16"} className="text-accent-foreground" />
-                  <span className="text-xs">
-                    <span className="font-bold">{inactiveRFQ.length}</span>{" "}
-                    <span className=" min-w-[20ch]">
-                      Unpublished {pluralize("RFQ", inactiveRFQ.length)}
-                    </span>
-                  </span>
-                </span>
-              </p>
-            )}
-          </div>
+          <h2 className="heading-text">Requests for Quotation</h2>
         </div>
         {permissions.create && (
           <div className="grid">
@@ -92,10 +64,20 @@ export default async function Page(props: PageProps) {
         )}
       </div>
       {/* Searching and filtering */}
-      <div className="section-content !mb-2 !bg-accent flex gap-4 md:gap-8 flex-wrap items-center">
-        <div className="grid grid-cols-3  gap-4 md:gap-8 w-full">
-          <FilterByYear defaultValue={props.searchParams.year} />
-          <FilterByVendor name="rfq" defaultValue={props.searchParams.rfq} />
+      <div className="flex items-center flex-wrap gap-4 md:gap-8 w-full p-2.5 border rounded-lg mb-2 bg-secondary/50">
+        <FilterByYear defaultValue={props.searchParams.year} />
+        <div className="relative">
+          <Input
+            className="md:w-[300px] lg:w-[400px] pr-4"
+            placeholder="Search by staff name or unit"
+          />
+          <Button
+            variant="secondary"
+            size={"icon"}
+            className="absolute right-0 top-1/2 -translate-y-1/2"
+          >
+            <SearchIcon className="h-4 w-4" />
+          </Button>
         </div>
       </div>
       {/* DATA */}

@@ -7,6 +7,7 @@ import SearchBar from "./SearchBar";
 import ThemeSwitcher from "./ThemeSwitcher";
 import UserAccount from "./UserAccount";
 import HistorySwitcher from "./HistorySwitcher";
+import Tooltip from "../ui/tooltip";
 
 export default function TopNavigationBar({ session, theme }: any) {
   return (
@@ -22,20 +23,24 @@ export default function TopNavigationBar({ session, theme }: any) {
             {!session && (
               <>
                 <li>
-                  <Link
-                    href="/account/login"
-                    className="text-foreground hover:text-primary font-semibold"
-                  >
-                    Login
-                  </Link>
+                  <Tooltip content="Login">
+                    <Link
+                      href="/account/login"
+                      className="text-foreground hover:text-primary font-semibold"
+                    >
+                      Login
+                    </Link>
+                  </Tooltip>
                 </li>
                 <li>
-                  <Link
-                    href="/account/signup"
-                    className="text-primary-foreground bg-primary p-2 rounded-md font-semibold"
-                  >
-                    Signup
-                  </Link>
+                  <Tooltip content="Register an account">
+                    <Link
+                      href="/account/signup"
+                      className="text-primary-foreground bg-primary p-2 rounded-md font-semibold"
+                    >
+                      Register Now
+                    </Link>
+                  </Tooltip>
                 </li>
               </>
             )}
@@ -44,20 +49,26 @@ export default function TopNavigationBar({ session, theme }: any) {
           {session && (
             <>
               <div className="">
-                <Link
-                  className="p-1 rounded hover:opacity-100 opacity-90"
-                  href={`/dashboard${session.meta.vendor ? "/vendor" : ""}`}
-                >
-                  <Home />
-                </Link>
+                <Tooltip content="Dashboard">
+                  <Link
+                    className="p-1 rounded hover:opacity-100 opacity-90"
+                    href={`/dashboard${session.meta.vendor ? "/vendor" : ""}`}
+                  >
+                    <Home />
+                  </Link>
+                </Tooltip>
               </div>
-              <div className="">
+              <div className="cursor-pointer">
                 <NotificationBell />
               </div>
-              <ThemeSwitcher theme={theme} />
+              <Tooltip content={theme === "dark" ? "Light Mode" : "Dark Mode"}>
+                <ThemeSwitcher theme={theme} />
+              </Tooltip>
 
               <div className="">
-                <UserAccount session={session} />
+                <Tooltip content="Account">
+                  <UserAccount session={session} />
+                </Tooltip>
               </div>
             </>
           )}

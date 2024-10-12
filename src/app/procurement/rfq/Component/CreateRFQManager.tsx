@@ -42,10 +42,10 @@ function init(length = 2): Item[] {
   return items;
 }
 
-export default function AddRFQItemsContainer(props: Props) {
+export default function CreateRFQManager(props: Props) {
   const { user, isOpen, rfq, closeDialog } = props;
   const [selectedRequisition, setSelectedRequisition] = useState<
-    Requisition | undefined
+    RequisitionRetrieve | undefined
   >();
 
   const [items, setItems] = useState(
@@ -81,8 +81,7 @@ export default function AddRFQItemsContainer(props: Props) {
   }
 
   async function submitForm(formData: FormData) {
-    if (formRef.current && !formRef.current.checkValidity()){
-
+    if (formRef.current && !formRef.current.checkValidity()) {
       formRef.current.reportValidity();
       return;
     }
@@ -111,7 +110,11 @@ export default function AddRFQItemsContainer(props: Props) {
   const formRef = useRef<HTMLFormElement>(null);
 
   return (
-    <form ref={formRef} action={submitForm} className="grid gap-2 pt-4 w-full">
+    <form
+      ref={formRef}
+      action={submitForm}
+      className="grid gap-2 pt-2 p-4 w-full"
+    >
       <input type="hidden" name="rfq_id" defaultValue={rfq?.id} />
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 px-1 pb-2 w-full min-[645px]">
         <div className="grid gap-1 col-span-1">
@@ -126,21 +129,15 @@ export default function AddRFQItemsContainer(props: Props) {
           </Label>
 
           <RequisitionSelect
-            open={isOpen}
-            fetchRequisition={
-              !rfq
+            setSelectedRequisition={setSelectedRequisition}
+            defaultValue={
+              rfq?.requisition
                 ? {
-                    cb: (data?: Requisition) => {
-                      if (data) {
-                        setSelectedRequisition(data);
-                        return;
-                      }
-                      setSelectedRequisition(undefined);
-                    },
+                    id: rfq.requisition.id.toString(),
+                    name: rfq.requisition.title,
                   }
                 : undefined
             }
-            defaultValue={rfq?.requisition}
           />
         </div>
 
@@ -173,26 +170,30 @@ export default function AddRFQItemsContainer(props: Props) {
           </p>
         </div>
       </div>
-      <div
-        data-wrapper
-        className="items max-h-[37dvh] h-full pr-4 overflow-auto"
-      >
-        <Label className="font-semibold pb-2">RFQ Items</Label>
+      <div data-wrapper className="items py-2">
+        <Label className="font-semibold inline-block pb-2">
+          RFQ Items
+          {selectedRequisition && (
+            <span className="text-muted-foreground inline-block pl-2 text-sm p-1">
+              ({selectedRequisition.items.length})
+            </span>
+          )}
+        </Label>
 
-        <div className="grid grid-cols-1">
+        <div className="grid grid-cols-1 border p-2 max-w-[95svw] h-max max-h-[40svh] overflow-y-auto overflow-x-auto">
           {items.map((item, idx) => (
-            <div className="row" key={item.id}>
-              <RFQItem
-                idx={idx}
-                defaultValue={!!selectedRequisition}
-                data={
-                  (rfq || selectedRequisition) &&
-                  (rfq || selectedRequisition)?.items[idx]
-                }
-                isLast={item.isNew}
-                remove={() => removeItem(item.id)}
-              />
-            </div>
+            <RFQItem
+              key={idx}
+              idx={idx}
+              defaultValue={!!selectedRequisition}
+              disabled={!!selectedRequisition || !!rfq}
+              data={
+                (rfq || selectedRequisition) &&
+                (rfq || selectedRequisition)?.items[idx]
+              }
+              isLast={item.isNew}
+              remove={() => removeItem(item.id)}
+            />
           ))}
         </div>
       </div>
@@ -200,15 +201,18 @@ export default function AddRFQItemsContainer(props: Props) {
       <DialogFooter className="ot-4 w-full">
         <div className=" w-full">
           <div className="flex items-center justify-between w-full gap-4">
-            <Button
-              type="button"
-              title={"Add RFQ Item"}
-              className="w-8 h-8 p-1 self-start rounded-full bg-secondary hover:bg-secondary text-secondary-foreground border shadow"
-              onClick={addItem}
-            >
-              <Plus />
-            </Button>
-
+            <div className="">
+              {!!(!rfq && !selectedRequisition) && (
+                <Button
+                  type="button"
+                  title={"Add RFQ Item"}
+                  className="w-8 h-8 p-1 self-start rounded-full bg-secondary hover:bg-secondary text-secondary-foreground border shadow"
+                  onClick={addItem}
+                >
+                  <Plus />
+                </Button>
+              )}
+            </div>
             <div className="grid grid-cols-[auto,auto] gap-x-6">
               <div className="grid sm:grid-cols-[auto,auto] items-center w-max gap-4">
                 <label

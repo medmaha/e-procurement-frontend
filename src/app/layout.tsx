@@ -2,7 +2,6 @@ import "./globals.css";
 import { Poppins } from "next/font/google";
 import { cookies } from "next/headers";
 import APP_COMPANY from "@/APP_COMPANY";
-import AsideNavigation from "@/Components/Navbar/AsideNavigation";
 import TopNavigationBar from "@/Components/Navbar/Index";
 import ClientLayout from "../Components/ClientLayout";
 
@@ -12,12 +11,17 @@ import {
   ACCESS_TOKEN_COOKIE_NAME,
   REFRESH_TOKEN_COOKIE_NAME,
 } from "@/lib/auth/constants";
+import { lazy, Suspense } from "react";
 const inter = Poppins({ weight: "400", preload: true, subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "E-Procurement",
   description: "E-procurement site offered by " + APP_COMPANY.provider.name,
 };
+
+const AsideNavigation = lazy(
+  () => import("@/Components/Navbar/AsideNavigation")
+);
 
 export default function RootLayout({ children }: any) {
   const session = getAuthUser();
@@ -31,7 +35,11 @@ export default function RootLayout({ children }: any) {
         <ClientLayout theme={theme} session={session}>
           {session ? (
             <div className={`grid ${session ? "grid-cols-[auto,1fr]" : ""}`}>
-              {session && <AsideNavigation user={session} />}
+              {session && (
+                <Suspense fallback={<div className="border-r h-full"></div>}>
+                  <AsideNavigation user={session} />
+                </Suspense>
+              )}
               <div className="grid min-h-[100svh] grid-rows-[auto,1fr,auto]">
                 <Header session={session} />
 

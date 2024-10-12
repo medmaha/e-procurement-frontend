@@ -1,6 +1,7 @@
 "use client";
 import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
+import Tooltip from "@/Components/ui/tooltip";
 import { LayoutGridIcon, SearchIcon, SheetIcon } from "lucide-react";
 
 type Props = {
@@ -29,22 +30,26 @@ export default function Header({ user, permissions, ...props }: Props) {
       </div>
       <div className="flex items-center justify-between gap-4">
         <div className="flex items-center justify-center gap-1">
-          <Button
-            size={"icon"}
-            className="rounded-lg"
-            variant={props.gridView ? "secondary" : "outline"}
-            onClick={() => props.setGridView(true)}
-          >
-            <LayoutGridIcon className="h-4 w-4" />
-          </Button>
-          <Button
-            size={"icon"}
-            className="rounded-lg"
-            onClick={() => props.setGridView(false)}
-            variant={!props.gridView ? "secondary" : "outline"}
-          >
-            <SheetIcon className="h-4 w-4" />
-          </Button>
+          <Tooltip content="Switch to grid view">
+            <Button
+              size={"icon"}
+              className="rounded-lg"
+              variant={props.gridView ? "secondary" : "outline"}
+              onClick={() => props.setGridView(true)}
+            >
+              <LayoutGridIcon className="h-4 w-4" />
+            </Button>
+          </Tooltip>
+          <Tooltip content="Switch to table view">
+            <Button
+              size={"icon"}
+              className="rounded-lg"
+              onClick={() => props.setGridView(false)}
+              variant={!props.gridView ? "secondary" : "outline"}
+            >
+              <SheetIcon className="h-4 w-4" />
+            </Button>
+          </Tooltip>
         </div>
         {permissions.create && (
           <Button onClick={props.createRequisition} className="">
