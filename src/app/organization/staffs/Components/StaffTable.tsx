@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Button } from "@/Components/ui/button";
 import { generate_unique_id } from "@/lib/helpers/generator";
 import { ColumnDef } from "@tanstack/react-table";
@@ -14,6 +14,7 @@ import { EditIcon, SearchIcon } from "lucide-react";
 import AddOrEditStaff from "./AddOrEditStaff";
 import StaffActivation from "./StaffActivation";
 import TabularData from "@/Components/widget/TabularData";
+import { toast } from "react-toastify";
 
 type Props = {
   user: AuthUser;
@@ -24,7 +25,6 @@ export default function StaffTable({ user }: Props) {
 
   const [selectedToBeUpdated, setStaffToActivate] = useState<Staff>();
   const [staffToUpdate, setStaffToUpdate] = useState<Staff>();
-  4;
 
   const columns = useMemo(() => {
     return staffColumns(
@@ -36,6 +36,7 @@ export default function StaffTable({ user }: Props) {
   }, [user, permissions]);
 
   const staffsQuery = useQuery({
+    enabled: !!user,
     queryKey: ["staffs", user.profile_id],
     staleTime: 1000 * 60 * 3,
     queryFn: async () => {
@@ -50,6 +51,12 @@ export default function StaffTable({ user }: Props) {
       return response.data;
     },
   });
+
+  useEffect(() => {
+    if (staffsQuery.error) {
+      alert(JSON.stringify(staffsQuery.error));
+    }
+  }, [staffsQuery.error]);
 
   return (
     <>
@@ -85,9 +92,7 @@ export default function StaffTable({ user }: Props) {
         {permissions?.create && (
           <div className="grid items-center">
             <AddOrEditStaff user={user} autoOpen={false}>
-              <Button>
-                Add Staff
-              </Button>
+              <Button>Add Staff</Button>
             </AddOrEditStaff>
           </div>
         )}

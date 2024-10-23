@@ -20,7 +20,6 @@ export default function Pricing(props: Props) {
 			placeholder="GMD"
 			disabled={props.disabled}
 			onInput={({ currentTarget }) => {
-				console.log(currentTarget.value);
 				const value = Number(currentTarget.value);
 				if (isNaN(value)) return;
 

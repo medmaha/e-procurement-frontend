@@ -46,6 +46,5 @@ function convertUrlSearchParamsToSearchString(json: Json, emitNext = true) {
 	if (string.endsWith("?")) string = string.slice(0, -1);
 
 	string = "?" + string;
-	console.log(string);
 	return string;
 }

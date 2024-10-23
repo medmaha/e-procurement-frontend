@@ -12,7 +12,6 @@ export async function renegotiateContract(data: FormData, pathname: string) {
 		else if (file.type === "application/octet-stream") data.delete("file");
 	}
 
-	console.log(file);
 	return actionRequest({
 		data,
 		pathname,

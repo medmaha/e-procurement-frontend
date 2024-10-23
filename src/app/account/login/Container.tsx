@@ -82,7 +82,7 @@ export default function Container() {
                     type="button"
                     variant={"secondary"}
                     onClick={() => setCredentials(demo)}
-                    className="w-max h-max  rounded-full inline-flex items-center justify-center text-white"
+                    className="w-max h-max border dark:border-none text-sm rounded-full inline-flex items-center justify-center"
                   >
                     USE
                   </Button>

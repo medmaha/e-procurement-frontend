@@ -9,8 +9,6 @@ export default async function Page(props: PageProps) {
   if (user) {
     const next = props.searchParams.next;
 
-    console.log(next);
-    console.log(searchParamsToSearchString(props.searchParams));
 
     if (next) return redirect(next);
     const url =

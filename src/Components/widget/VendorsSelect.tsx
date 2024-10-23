@@ -35,8 +35,6 @@ export default function SupplierSelect(props: Props) {
     if (response.success) {
       const data = transformData(response.data);
       if (data) {
-        CACHE?.set("groups", data, 45);
-        console.log(data);
         setGroups(data);
       }
     }

@@ -49,7 +49,6 @@ export default async function Page(props: PageProps) {
   const rfq = quotationsCanBeEvaluated(quotations, user);
   const deadline = rfq ? isDeadlineDate(rfq.deadline) : false;
 
-  console.log(rfq);
 
   return (
     <section className="section">

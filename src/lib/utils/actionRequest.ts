@@ -14,12 +14,11 @@ export const actionRequest = async <T = any, X = Json>(
       method: params.method,
       headers: params.headers,
     });
+    
     if (!params.noRevalidate && params.method !== "get" && params.pathname)
       revalidatePath(params.pathname, "page");
 
     const { id, data, extras = {}, auth_perms = {} } = response;
-
-    console.log(data);
 
     return {
       id,
@@ -33,7 +32,6 @@ export const actionRequest = async <T = any, X = Json>(
       method: params.method,
     } as ActionRespond<T, X>;
   } catch (error: any) {
-    console.log(error);
 
     const _error = {
       status: error?.status || error?.response?.status || 444,

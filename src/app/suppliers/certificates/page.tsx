@@ -18,7 +18,6 @@ export const metadata: Metadata = {
 
 export default async function Page(props: PageProps) {
 	const user = await getAuthenticatedUser();
-	console.log(user);
 	if (!user) return redirect("/account/login?next=/suppliers/certificates");
 
 	const response = await actionRequest<Certificate[]>({

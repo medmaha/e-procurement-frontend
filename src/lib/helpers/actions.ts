@@ -21,7 +21,6 @@ export const urlToNextPath = (href?: string, withPathname = true) => {
 			const pathname = url.pathname;
 			const next = url.searchParams.get("next");
 
-			console.log(next, pathname);
 
 			if (next === pathname) return "";
 

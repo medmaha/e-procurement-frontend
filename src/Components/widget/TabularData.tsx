@@ -75,8 +75,9 @@ function TabularData<T = any>({ data, columns, loading, ...props }: Props<T>) {
   return (
     <div
       className={cn(
-        "w-full min-h-[25svh] relative border",
-        props.wrapperClassName
+        "w-full relative border",
+        props.wrapperClassName,
+        loading ? "min-h-[25svh]" : "min-h-[130px]"
       )}
     >
       <Table className="border-none w-full">

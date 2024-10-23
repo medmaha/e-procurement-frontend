@@ -115,6 +115,11 @@ export const StaffAccordions = [
         name: "procurement_thresholds",
         href: "/organization/plans/thresholds",
       },
+      {
+        label: "Approval Workflows",
+        name: "approval_workflows",
+        href: "/organization/workflows",
+      },
     ],
   },
 

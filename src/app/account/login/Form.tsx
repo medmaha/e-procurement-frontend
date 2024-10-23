@@ -1,8 +1,8 @@
 "use client";
+import { doLogin } from "./actions";
 import React, { useRef } from "react";
 import { toast } from "react-toastify";
 import { Input } from "@/Components/ui/input";
-import { doLogin } from "./actions";
 import SubmitButton from "@/Components/widget/SubmitButton";
 
 type Props = {
@@ -29,13 +29,21 @@ export default function Form({ email, password }: Props) {
             passwordField.value = "";
           }
         } else {
-          ref.current?.reset();
           toast.success(data.message, {
             position: "top-right",
             autoClose: 2500,
             closeOnClick: false,
             hideProgressBar: true,
           });
+          await new Promise((resolve) => setTimeout(resolve, 2500));
+          ref.current?.reset();
+          const url = new URL(location.href);
+          const next = url.searchParams.get("next");
+          if (next && next !== location.pathname) {
+            location.href = next;
+          } else {
+            location.href = "/organization/staffs";
+          }
         }
       }}
       className="block w-full"

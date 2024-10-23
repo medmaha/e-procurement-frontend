@@ -30,8 +30,6 @@ export default function StaffsSelect(props: Props) {
 			}
 			const response = await getStaffSelections();
 			if (response.success) {
-				console.log(response.data);
-				CACHE?.set("staffs", response.data);
 				setStaffs(response.data);
 			}
 		};
