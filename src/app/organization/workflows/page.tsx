@@ -2,7 +2,7 @@ import { getAuthenticatedUser } from "@/lib/auth/generics";
 import { actionRequest } from "@/lib/utils/actionRequest";
 import { redirect } from "next/navigation";
 import React from "react";
-import Container from "./Container";
+import PageContainer from "./PageContainer";
 
 export default async function page() {
   const user = await getAuthenticatedUser();
@@ -12,7 +12,7 @@ export default async function page() {
   }
   const response = await actionRequest({
     method: "get",
-    url: "/procurement/workflows/?type=requisition",
+    url: "/procurement/requisitions/workflows/",
   });
 
   if (!response.success)
@@ -28,7 +28,7 @@ export default async function page() {
 
   return (
     <section className="section">
-      <Container user={user} workflows={response.data} />
+      <PageContainer user={user} workflows={response.data} />
     </section>
   );
 }
