@@ -17,7 +17,7 @@ export default async function WorkflowDetailPage({
 
   const response = await actionRequest<WorkflowInterface>({
     method: "get",
-    url: `/procurement/workflows/${params.id}/`,
+    url: `/procurement/requisitions/workflows/${params.id}/`,
   });
 
 //   if (!response.success) {

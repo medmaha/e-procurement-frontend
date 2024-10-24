@@ -85,7 +85,7 @@ const WorkflowDetail: React.FC<WorkflowDetailProps> = ({ workflow }) => {
                   Step {index + 1}:&nbsp;{step.name}
                 </h3>
                 <p className="block mb-2 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">
-                  Approver: "Mahammed Touray"
+                  Approver: Mahammed Touray
                 </p>
                 <p className="mb-4 text-base font-normal text-gray-500 dark:text-gray-400">
                   Role: {step.role}

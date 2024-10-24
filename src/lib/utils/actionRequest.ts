@@ -4,6 +4,9 @@ import { revalidatePath } from "next/cache";
 import { axiosInstance } from "@/lib/axiosInstance";
 import { getCleanErrorMessage } from "../helpers/error";
 
+/**
+ * Form Action Request to the backend
+ */
 export const actionRequest = async <T = any, X = Json>(
   params: RequestProps
 ) => {
@@ -14,7 +17,7 @@ export const actionRequest = async <T = any, X = Json>(
       method: params.method,
       headers: params.headers,
     });
-    
+
     if (!params.noRevalidate && params.method !== "get" && params.pathname)
       revalidatePath(params.pathname, "page");
 
@@ -32,7 +35,6 @@ export const actionRequest = async <T = any, X = Json>(
       method: params.method,
     } as ActionRespond<T, X>;
   } catch (error: any) {
-
     const _error = {
       status: error?.status || error?.response?.status || 444,
       success: false,
