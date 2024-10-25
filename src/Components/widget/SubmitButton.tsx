@@ -2,10 +2,10 @@
 import { useFormStatus } from "react-dom";
 import { cn } from "@/lib/ui/utils";
 import { Button, ButtonProps } from "../ui/button";
-import { useEffect, useRef, useState } from "react";
+import { ReactNode, useEffect, useRef, useState } from "react";
 
 interface Props extends ButtonProps {
-  text: string;
+  text?: ReactNode;
   normalBtn?: boolean;
   onSubmitText?: string;
 }

@@ -58,7 +58,9 @@ export default function Container({ user, workflows }: Props) {
         {filteredWorkflows.map((workflow) => (
           <Card key={workflow.id} className="flex flex-col">
             <CardHeader className="">
-              <CardTitle className="line-clamp-2 text-lg">{workflow.name}</CardTitle>
+              <CardTitle className="line-clamp-2 text-lg">
+                {workflow.name}
+              </CardTitle>
             </CardHeader>
             <CardContent className="flex-1">
               <div className="grid grid-cols-2 gap-y-1 gap-x-4">
