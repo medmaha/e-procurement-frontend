@@ -7,6 +7,7 @@ interface ApprovalMatrixInterface {
   max_amount?: number;
   created_date: string;
   last_modified: string;
+  status?: string;
   description?: string;
   author?: {
     id: ID;
@@ -20,21 +21,29 @@ interface WorkflowInterface {
   created_date: string;
   last_modified: string;
   description?: string;
-  officer?: {
+  author?: {
     id: ID;
     name: string;
     avatar?: string;
   };
   status: "active" | "inactive";
   approval_steps?: ApprovalStepInterface[];
-  workflow_steps: WorkflowStepInterface[];
+  workflow_steps: ApprovalWorkflowStepInterface[];
 }
 
-interface WorkflowStepInterface {
+interface ApprovalWorkflowStepInterface {
   id: ID;
-  name: string;
+  name?: string;
   order: number;
+  description?: string;
   step: ApprovalStepInterface;
+  author?: {
+    id: ID;
+    name: string;
+    avatar?: string;
+    job_title?: string;
+  };
+  status: "active" | "inactive";
   condition: string | null;
   created_date: string;
   last_modified: string;
@@ -45,10 +54,19 @@ interface ApprovalStepInterface {
   order: number;
   name: string;
   role?: string;
-  officer?: {
+  description?: string;
+  author?: {
     id: ID;
     name: string;
     avatar?: string;
+    job_title?: string;
+  };
+  approver?: {
+    id: ID;
+    name: string;
+    avatar?: string;
+    unit?: Unit;
+    job_title?: string;
   };
   is_final: boolean;
   is_optional: boolean;
@@ -57,4 +75,9 @@ interface ApprovalStepInterface {
   time_limit?: string;
   created_date: string;
   last_modified: string;
+}
+
+
+interface PRApprovalAction {
+
 }

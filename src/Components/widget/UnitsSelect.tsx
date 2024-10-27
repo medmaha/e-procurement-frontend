@@ -1,83 +1,126 @@
 "use client";
 import { useEffect, useState } from "react";
 import {
-	Select,
-	SelectContent,
-	SelectGroup,
-	SelectItem,
-	SelectLabel,
-	SelectTrigger,
-	SelectValue,
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
 } from "@/Components/ui/select";
 import CACHE from "@/lib/caching";
 import { getUnitSelection } from "./actions";
+import { cn } from "@/lib/ui/utils";
+import { useQuery } from "@tanstack/react-query";
+import { actionRequest } from "@/lib/utils/actionRequest";
 
 type UnitSelect = {
-	id: ID;
-	name: string;
-	department: string;
+  id: ID;
+  name: string;
+  department: string;
 };
 
 type Props = {
-	name?: string;
-	open: boolean;
-	required?: boolean;
-	disabled?: boolean;
-	defaultValue?: string;
+  name?: string;
+  authUserId?: ID;
+  placeholder?: string;
+  required?: boolean;
+  disabled?: boolean;
+  defaultValue?: string;
 };
 
 export default function UnitsSelect(props: Props) {
-	const { disabled, required } = props;
-	const [units, setUnit] = useState<UnitSelect[]>([]);
+  const { authUserId, disabled, required } = props;
 
-	useEffect(() => {
-		const fetchUnits = async () => {
-			const cache_key = "units";
-			const cached = CACHE.get(cache_key);
-			if (cached?.length) {
-				return setUnit(cached);
-			}
-			const response = await getUnitSelection();
+  const [selectedUnit, setSelectedUnit] = useState<Unit>();
 
-			if (response.success) {
-				CACHE?.set(cache_key, response.data ?? []);
-				setUnit(response.data ?? []);
-			}
-		};
-		fetchUnits();
-	}, []);
+  const unitsQuery = useQuery({
+    queryKey: ["units", authUserId],
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    queryFn: async () => {
+      const response = await actionRequest<Unit[]>({
+        method: "get",
+        url: "/organization/units/",
+      });
+      if (!response.success) throw response;
 
-	return (
-		<Select
-			key={props.defaultValue}
-			defaultValue={props.defaultValue && String(props.defaultValue)}
-			name={props.name || "unit"}
-			disabled={disabled}
-			required={required}
-		>
-			<SelectTrigger
-				className="bg-background text-sm disabled:pointer-events-none"
-				disabled={disabled}
-			>
-				<SelectValue placeholder="Select an option" />
-			</SelectTrigger>
-			<SelectContent className="p-0 m-0 w-full">
-				<SelectGroup className="m-0 p-1">
-					<SelectLabel className="px-4">Select A Department</SelectLabel>
-					{units?.map((unit) => {
-						return (
-							<SelectItem key={unit.id} value={String(unit.id)}>
-								{unit.name}
-								{/* <div className="flex items-center gap-4 justify-between w-full">
-									<span>{unit.name}</span>
-									<span>{" - "}</span>
-									<span>{unit.department}</span>
-								</div> */}
-							</SelectItem>
-						);
-					})}
-				</SelectGroup>
-			</SelectContent>
-		</Select>
-	);
+      if (props.defaultValue) {
+        setSelectedUnit(
+          response.data.find((unit) => unit.id === props.defaultValue)
+        );
+      }
+      return response.data;
+    },
+  });
+
+  return (
+    <Select
+      key={selectedUnit?.id}
+      defaultValue={selectedUnit?.id.toString()}
+      name={props.name || "unit"}
+      disabled={disabled}
+      required={required}
+      onValueChange={(value) => {
+        setSelectedUnit(
+          unitsQuery.data?.find(
+            (unit) => unit.id?.toString() === value.toString()
+          )
+        );
+      }}
+    >
+      <SelectTrigger
+        className={cn(
+          "bg-background text-sm disabled:pointer-events-none",
+          !selectedUnit && "text-muted-foreground"
+        )}
+        disabled={disabled}
+      >
+        {selectedUnit ? (
+          <div className="inline-flex gap-1.5 text-sm">
+            <span>{selectedUnit.name}</span>
+            <span>{" - "}</span>
+            <span className="text-muted-foreground">
+              {departmentName(selectedUnit.department)}
+            </span>
+          </div>
+        ) : (
+          <SelectValue placeholder={props.placeholder || "Select an option"} />
+        )}
+      </SelectTrigger>
+      <SelectContent className="p-0 m-0 w-full">
+        <SelectGroup className="m-0 p-1">
+          <SelectLabel className="px-4">
+            {unitsQuery.isLoading
+              ? "Loading..."
+              : unitsQuery.data && unitsQuery.data.length > 0
+              ? "Select a Unit"
+              : "No Units Found"}
+          </SelectLabel>
+          {unitsQuery.data?.map((unit) => {
+            return (
+              <SelectItem key={unit.id} value={String(unit.id)} className="p-0">
+                <div className="flex items-center gap-2 justify-between w-full p-2">
+                  <span>{unit.name}</span>
+                  <span>{" - "}</span>
+                  <span className="text-muted-foreground">
+                    {departmentName(unit.department)}
+                  </span>
+                </div>
+              </SelectItem>
+            );
+          })}
+        </SelectGroup>
+      </SelectContent>
+    </Select>
+  );
+}
+
+function departmentName(department: Staff["unit"]["department"]) {
+  if (!department) return "";
+
+  if (department?.name.toLowerCase().includes("department"))
+    return department.name;
+
+  return `${department.name} Department`;
 }

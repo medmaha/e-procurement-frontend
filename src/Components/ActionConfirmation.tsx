@@ -32,9 +32,15 @@ export default function ActionConfirmation(props: Props) {
   const { showLoadingIcon = true } = props;
 
   async function confirm() {
-    setLoading(true);
-    await props.onConfirm(() => toggleOpen(false));
-    setLoading(false);
+    if (!props.onConfirm) return
+    try {
+      setLoading(true);
+      await props.onConfirm(() => toggleOpen(false));
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -43,7 +49,7 @@ export default function ActionConfirmation(props: Props) {
         {props.children}
       </AlertDialogTrigger>
       <AlertDialogContent>
-        <AlertDialogHeader>
+        <AlertDialogHeader className="space-y-1">
           <AlertDialogTitle className="font-semibold">
             {props.title || "Confirmation"}
           </AlertDialogTitle>
