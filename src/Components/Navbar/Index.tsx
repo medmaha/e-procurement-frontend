@@ -8,6 +8,7 @@ import ThemeSwitcher from "./ThemeSwitcher";
 import UserAccount from "./UserAccount";
 import HistorySwitcher from "./HistorySwitcher";
 import Tooltip from "../ui/tooltip";
+import NavLinks from "./NavLinks";
 
 export default function TopNavigationBar({ session, theme }: any) {
   return (
@@ -16,9 +17,11 @@ export default function TopNavigationBar({ session, theme }: any) {
         <div className="hidden md:block">
           <HistorySwitcher user={session} />
         </div>
-        {session && <SearchBar user={session} />}
 
-        <div className="flex items-center gap-4 flex-1 justify-end">
+        <NavLinks />
+        {/* {session && <SearchBar user={session} />} */}
+
+        <div className="flex items-center gap-4">
           <ul className="md:flex items-center gap-6 hidden">
             {!session && (
               <>

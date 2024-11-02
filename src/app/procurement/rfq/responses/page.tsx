@@ -43,54 +43,15 @@ export default async function Page(props: PageProps) {
     );
   }
 
-  const acceptedQuotes = quotesByStatus("ACCEPTED");
-  const rejectedQuotes = quotesByStatus("REJECTED");
+  const acceptedQuotes = quotesByStatus("approved");
+  const rejectedQuotes = quotesByStatus("rejected");
 
   const rfq = quotationsCanBeEvaluated(quotations, user);
-  const deadline = rfq ? isDeadlineDate(rfq.deadline) : false;
-
+  const deadline = rfq ? isDeadlineDate(rfq.quotation_deadline_date) : false;
 
   return (
     <section className="section">
-      <ClientSitePage
-        search={{
-          model_name: "RFQ Response",
-          model_fields: "id, date, vendor, deadline, etc",
-        }}
-      />
-      <div className="section-heading !mb-2">
-        <div className="flex justify-between items-center gap-4 md:gap-8 flex-wrap">
-          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold">
-            RFQ Responses
-          </h1>
-        </div>
-        <div className="grid px-2 pt-1">
-          {acceptedQuotes.length > 0 && (
-            <p className="text-muted-foreground inline-flex items-center gap-2 text-sm">
-              <span className="inline-flex items-center gap-4">
-                <Check size={"16"} className="text-primary" />
-                <span className="text-xs">
-                  <span className="font-bold">{acceptedQuotes.length}</span>{" "}
-                  Accepted {pluralize("Quotation", acceptedQuotes.length)}
-                </span>
-              </span>
-            </p>
-          )}
-          {rejectedQuotes.length > 0 && (
-            <p className="text-muted-foreground inline-flex items-center gap-2 text-sm">
-              <span className="inline-flex items-center gap-4">
-                <Info size={"16"} className="text-destructive" />
-                <span className="text-xs">
-                  <span className="font-bold">{rejectedQuotes.length}</span>{" "}
-                  <span className=" min-w-[20ch]">
-                    Declined {pluralize("Quotation", rejectedQuotes.length)}
-                  </span>
-                </span>
-              </span>
-            </p>
-          )}
-        </div>
-      </div>
+      <ClientSitePage page={{ title: "Quotation Responses" }} />
       {/* Searching and filtering */}
       <div className="section-content !bg-accent !mb-2 flex gap-4 md:gap-8 flex-wrap items-center">
         <div className="flex items-center justify-center gap-2 sm:gap-4 flex-1 flex-wrap">
@@ -111,19 +72,9 @@ export default async function Page(props: PageProps) {
                 rfq_id={rfq.id}
               >
                 <Button className="md:text-base h-9 sm:font-semibold gap-1.5">
-                  <Vote className="w-4 h-4" />
-                  <span>RFQ Evaluation</span>
+                  RFQ Evaluation
                 </Button>
               </EvaluateQuotations>
-              <Link className="" href={`/form-101?m=rfq&i=${rfq.id}`}>
-                <Button
-                  // variant={"outline"}
-                  className="sm:font-semibold h-9 md:text-base gap-1.5 border hover:bg-primary hover:text-primary-foreground"
-                >
-                  <LinkIcon className="w-4 h-4" />
-                  <span>RFQ Details</span>
-                </Button>
-              </Link>
             </div>
           )}
         </div>
@@ -132,8 +83,4 @@ export default async function Page(props: PageProps) {
       <RFQResponseTable data={quotations} user={user} />
     </section>
   );
-}
-
-function pluralize(text: string, item_count: number) {
-  return text + (item_count > 1 ? "s" : "");
 }

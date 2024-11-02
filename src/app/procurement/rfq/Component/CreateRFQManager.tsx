@@ -135,6 +135,8 @@ export default function CreateRFQManager(props: Props) {
                 ? {
                     id: rfq.requisition.id.toString(),
                     name: rfq.requisition.title,
+                    created_date:
+                      rfq.requisition.created_date || rfq.created_date,
                   }
                 : undefined
             }
@@ -240,7 +242,7 @@ export default function CreateRFQManager(props: Props) {
                   type="date"
                   name="required_date"
                   required
-                  defaultValue={rfq?.deadline.split("T")[0]}
+                  defaultValue={rfq?.quotation_deadline_date.split("T")[0]}
                 />
               </div>
             </div>

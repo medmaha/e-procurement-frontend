@@ -10,6 +10,8 @@ const buttonVariants = cva(
       variant: {
         default:
           "bg-primary text-primary-foreground _hover:bg-primary/90 opacity-90 hover:opacity-100",
+        success:
+          "bg-success text-success-foreground _hover:bg-success/90 opacity-90 hover:opacity-100",
         destructive:
           "bg-destructive text-destructive-foreground hover:bg-destructive/90",
         outline:

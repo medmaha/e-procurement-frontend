@@ -13,6 +13,7 @@ import EnableDepartment from "./Components/EnableDepartment";
 import ViewDepartment from "./Components/ViewDepartment";
 import { generate_unique_id } from "@/lib/helpers/generator";
 import { Input } from "@/Components/ui/input";
+import ClientSitePage from "@/Components/ui/ClientSitePage";
 
 export const metadata: Metadata = {
   title: "Departments | E-Procurement",
@@ -53,15 +54,13 @@ export default async function Page() {
     );
   }
 
-  function departmentByStatus(status: boolean) {
-    return (
-      departments?.filter((department) => !department.disabled == status) || []
-    );
-  }
-  const activeDepartments = departmentByStatus(true);
-  const inactiveDepartments = departmentByStatus(false);
   return (
     <section className="section">
+      <ClientSitePage
+        page={{
+          title: "Departments",
+        }}
+      />
       <div className="section-heading">
         <div className="relative">
           <Input
@@ -76,9 +75,11 @@ export default async function Page() {
             <SearchIcon className="h-4 w-4" />
           </Button>
         </div>
-        <div className="grid">
-          <AddDepartment text={"Add Department"} />
-        </div>
+        {permissions.create && (
+          <div className="grid">
+            <AddDepartment text={"Add Department"} />
+          </div>
+        )}
       </div>
 
       <div className="w-full">

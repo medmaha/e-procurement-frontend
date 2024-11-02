@@ -19,11 +19,11 @@ export async function retrieveRequisition(_id: string) {
   return response;
 }
 
-export async function approveRequisition(data: Json) {
+export async function approveRequisition(data: Json, requisition_id?: ID) {
   return actionRequest({
     data,
     method: "put",
-    url: "/procurement/requisitions/approve/",
+    url: "/procurement/requisitions/" + requisition_id + "/approve/",
   });
 }
 

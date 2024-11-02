@@ -39,7 +39,7 @@ export default function CreatePurchaseOrder(props: Props) {
 						<p className="text-muted-foreground">
 							<b className="font-semibold">Note: </b>
 							This action will invalidate all quotations attached to this RFQ
-							{" (" + props.quotation.rfq.unique_id + ")"}
+							{" (" + props.quotation.rfq.id + ")"}
 						</p>
 					</div>
 				</AlertDialogHeader>

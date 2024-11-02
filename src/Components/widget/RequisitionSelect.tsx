@@ -1,5 +1,5 @@
 import { Loader2 } from "lucide-react";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
   Select,
@@ -13,6 +13,7 @@ import {
 import { getRequisitionSelection } from "./actions";
 import { generate_unique_id } from "@/lib/helpers/generator";
 import { retrieveRequisition } from "@/app/procurement/requisitions/actions";
+import { format } from "date-fns";
 
 type Props = {
   required?: boolean;
@@ -24,6 +25,7 @@ type Props = {
 type RequisitionSelect = {
   id: ID;
   name: string;
+  created_date: string;
 };
 
 export default function RequisitionSelect(props: Props) {
@@ -33,7 +35,7 @@ export default function RequisitionSelect(props: Props) {
   const [selectedRequisition, setSelectedRequisition] =
     useState<RequisitionSelect>();
 
-  const requisitionQuery = useQuery({
+  const { data } = useQuery({
     staleTime: Infinity,
     enabled: retrieve && !!selectedRequisition?.id,
     queryKey: ["requisition", selectedRequisition?.id],
@@ -42,15 +44,20 @@ export default function RequisitionSelect(props: Props) {
         String(selectedRequisition?.id)
       );
       if (response.success) {
-        props.setSelectedRequisition?.(response.data);
-        return response.data as RequisitionRetrieve;
+        return response.data;
       }
       throw response;
     },
   });
 
+  useEffect(() => {
+    if (data) {
+      props.setSelectedRequisition?.(data);
+    }
+  }, [data]);
+
   const requisitionSelectQuery = useQuery<RequisitionSelect[]>({
-    staleTime: Infinity,
+    staleTime: 1000 * 60 * 3, // 3 minutes
     enabled: isOpen || !!props.defaultValue,
     queryKey: ["requisitions", "select", props.defaultValue?.id],
     queryFn: async () => {
@@ -108,7 +115,16 @@ export default function RequisitionSelect(props: Props) {
           className="bg-background h-full text-sm disabled:pointer-events-none"
           disabled={disabled}
         >
-          <SelectValue placeholder={"Select an requisition"} />
+          {selectedRequisition ? (
+            <div className="inline-flex w-full gap-2 items-center truncate pr-8">
+              <span>{generate_unique_id("PR", selectedRequisition.id)}</span>
+              <small className="text-muted-foreground">
+                ({format(new Date(selectedRequisition.created_date), "Pp")})
+              </small>
+            </div>
+          ) : (
+            <SelectValue placeholder={"Select an requisition"} />
+          )}
         </SelectTrigger>
         <SelectContent className="p-0 m-0 w-full min-h-[80px]">
           <SelectGroup className="m-0 p-1">
@@ -129,9 +145,19 @@ export default function RequisitionSelect(props: Props) {
             {requisitionSelectQuery.data?.map((requisition) => {
               return (
                 <SelectItem key={requisition.id} value={String(requisition.id)}>
-                  {generate_unique_id("REQ", requisition.id)}
-                  {" - "}
-                  {requisition.name}
+                  <div className="inline-grid">
+                    {generate_unique_id("PR", requisition.id)}
+                    <div className="space-y-1 grid">
+                      <span className="text-xs text-muted-foreground inline-block truncate">
+                        {requisition.name}
+                      </span>
+                      <span className="text-xs text-muted-foreground inline-block truncate">
+                        <small>
+                          {format(new Date(requisition.created_date), "PPPPp")}
+                        </small>
+                      </span>
+                    </div>
+                  </div>
                 </SelectItem>
               );
             })}

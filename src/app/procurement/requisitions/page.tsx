@@ -3,6 +3,7 @@ import { Metadata } from "next/types";
 import React from "react";
 import { getAuthenticatedUser } from "@/lib/auth/generics";
 import Container from "./Container";
+import ClientSitePage from "@/Components/ui/ClientSitePage";
 
 export const metadata: Metadata = {
   title: "Requisitions | E-Procurement",
@@ -17,6 +18,11 @@ export default async function Page(props: PageProps) {
 
   return (
     <section className="section">
+      <ClientSitePage
+        page={{
+          title:"Requisitions"
+        }}
+      />
       <Container user={user} />
     </section>
   );

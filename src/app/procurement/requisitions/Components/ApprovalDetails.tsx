@@ -24,7 +24,7 @@ export default function ApprovalDetails({ user, data, loading }: Props) {
       <TabularData
         loading={loading}
         columns={columns}
-        data={approvalsToList(data?.approval)}
+        data={[]}
         wrapperClassName={cn(
           "border border-t-none min-h-[15svh]",
           !loading && "min-h-[0px]"
@@ -37,57 +37,28 @@ export default function ApprovalDetails({ user, data, loading }: Props) {
   );
 }
 
-const approvalsToList = (approval?: RequisitionRetrieveApproval) => {
-  const {
-    unit_approval,
-    department_approval,
-    procurement_approval,
-    finance_approval,
-  } = approval || {};
 
-  return [
-    { ...unit_approval, id: "unit_approval", name: "Unit Approval" },
-    {
-      ...department_approval,
-      id: "department_approval",
-      name: "Department Approval",
-    },
-    {
-      ...finance_approval,
-      id: "finance_approval",
-      name: "Finance Approval",
-    },
-    {
-      ...procurement_approval,
-      id: "procurement_approval",
-      name: "Procurement Approval",
-    },
-  ];
-};
-
-type Approval = ReturnType<typeof approvalsToList>[number];
-
-const requisitionApprovalColumns = (user: AuthUser): ColumnDef<Approval>[] => [
+const requisitionApprovalColumns = (user: AuthUser): ColumnDef<PRApprovalAction>[] => [
   {
     header: "Stage",
     accessorKey: "name",
   },
   {
-    header: "Officer",
-    accessorKey: "officer?.name",
+    header: "Approver",
+    accessorKey: "approver?.name",
     cell: ({ row }) => {
-      const stageOfficer = row.original?.officer;
-      if (!stageOfficer) {
+      const stageApprover = row.original?.approver;
+      if (!stageApprover) {
         return "N/A";
       }
       return (
         <Link
-          href={"/organization/staffs/" + stageOfficer?.id}
+          href={"/organization/staffs/" + stageApprover?.id}
           className={
             "transition hover:underline underline-offset-4 truncate hover:text-primary"
           }
         >
-          {stageOfficer.name}
+          {stageApprover.name}
         </Link>
       );
     },
@@ -96,12 +67,12 @@ const requisitionApprovalColumns = (user: AuthUser): ColumnDef<Approval>[] => [
     header: "Status",
     accessorKey: "status",
     cell: ({ row }) => {
-      const approval = row.original?.approve?.toLowerCase();
+      const approval = row.original?.action;
       return (
         <Badge
           className="capitalize"
           variant={
-            approval === "accepted"
+            approval === "approved"
               ? "default"
               : approval === "rejected"
               ? "destructive"
@@ -118,7 +89,7 @@ const requisitionApprovalColumns = (user: AuthUser): ColumnDef<Approval>[] => [
     accessorKey: "remark",
     cell: ({ row: { original } }) => {
       return (
-        <p className="text-xs line-clamp-2">{original?.remark || "N/A"}</p>
+        <p className="text-xs line-clamp-2">{original?.comments || "N/A"}</p>
       );
     },
   },

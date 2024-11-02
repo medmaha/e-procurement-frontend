@@ -10,25 +10,10 @@ export default async function page() {
   if (!user) {
     redirect("/account/login?next=/organization/workflows");
   }
-  const response = await actionRequest({
-    method: "get",
-    url: "/procurement/requisitions/workflows/",
-  });
-
-  if (!response.success)
-    return (
-      // <Container workflows={response.data} />
-      <section className="section">
-        <pre>
-          Error: &nbsp;
-          <code>{JSON.stringify(response, null, 2)}</code>
-        </pre>
-      </section>
-    );
 
   return (
     <section className="section">
-      <PageContainer user={user} workflows={response.data} />
+      <PageContainer user={user}/>
     </section>
   );
 }

@@ -15,6 +15,7 @@ import OpenedBy from "@/Components/widget/OpenedBy";
 import { Label } from "@radix-ui/react-label";
 import { ColumnDef } from "@tanstack/react-table";
 import TabularData from "@/Components/widget/TabularData";
+import { generate_unique_id } from "@/lib/helpers/generator";
 
 type Props = {
   user: AuthUser;
@@ -65,9 +66,9 @@ export default function RFQDetails(props: Props) {
           <p className="rounded-md border">
             <Link
               className="inline-block w-full hover:underline underline-offset-4 p-1 text-xs md:text-sm md:p-2 transition hover:bg-secondary hover:text-secondary-foreground"
-              href={`/procurement/requisitions/${rfq?.requisition.unique_id}`}
+              href={`/procurement/requisitions/${rfq?.requisition.id}`}
             >
-              {rfq?.requisition.unique_id}
+              {generate_unique_id("PR", rfq?.requisition.id)}
             </Link>
           </p>
         </div>
@@ -151,7 +152,7 @@ export default function RFQDetails(props: Props) {
             Date Required:
           </label>
           <p className="p-2 rounded-md border text-muted-foreground text-sm">
-            {rfq && format(new Date(rfq?.deadline), "PPP")}
+            {rfq && format(new Date(rfq?.quotation_deadline_date), "PPP")}
           </p>
         </div>
       </div>

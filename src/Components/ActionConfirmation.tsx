@@ -22,7 +22,7 @@ type Props = {
   children: ReactElement<HTMLButtonElement>;
   onConfirm: (callback: () => void) => Promise<any>;
   showLoadingIcon?: boolean;
-  variant?: "default" | "destructive" | "outline" | "secondary" | "ghost";
+  variant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "success";
 };
 
 export default function ActionConfirmation(props: Props) {
@@ -32,7 +32,7 @@ export default function ActionConfirmation(props: Props) {
   const { showLoadingIcon = true } = props;
 
   async function confirm() {
-    if (!props.onConfirm) return
+    if (!props.onConfirm) return;
     try {
       setLoading(true);
       await props.onConfirm(() => toggleOpen(false));

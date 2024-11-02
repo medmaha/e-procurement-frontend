@@ -76,10 +76,10 @@ export default async function page(props: PageProps) {
 							</thead>
 							<tbody>
 								<tr>
-									<td>{quoteRespond.rfq.unique_id}</td>
-									<td>{quoteRespond.rfq.officer.name}</td>
+									<td>{quoteRespond.rfq.id}</td>
+									<td>{quoteRespond.rfq.officer?.name}</td>
 									<td>
-										{format(new Date(quoteRespond.rfq.created_date), "Pp")}
+										{format(new Date(quoteRespond.created_date), "Pp")}
 									</td>
 									<td>{format(new Date(quoteRespond.deadline), "Pp")}</td>
 								</tr>
@@ -101,7 +101,7 @@ export default async function page(props: PageProps) {
 								</tr>
 							</thead>
 							<tbody>
-								{quoteRespond.items.map((item, index) => (
+								{quoteRespond.rfq.items.map((item, index) => (
 									<tr key={item.id}>
 										<td>
 											<small>{index + 1}.</small>
@@ -142,7 +142,7 @@ export default async function page(props: PageProps) {
 									<td>{quoteRespond.unique_id}</td>
 									<td>{quoteRespond.vendor.name}</td>
 									<td>
-										{format(new Date(quoteRespond.rfq.created_date), "Pp")}
+										{format(new Date(quoteRespond.created_date), "Pp")}
 									</td>
 									<td>{format(new Date(quoteRespond.last_modified), "Pp")}</td>
 								</tr>

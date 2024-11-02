@@ -76,8 +76,8 @@ function TabularData<T = any>({ data, columns, loading, ...props }: Props<T>) {
     <div
       className={cn(
         "w-full relative border",
-        props.wrapperClassName,
-        loading ? "min-h-[25svh]" : "min-h-[130px]"
+        loading ? "min-h-[25svh]" : "min-h-[130px]",
+        props.wrapperClassName
       )}
     >
       <Table className="border-none w-full">
@@ -148,7 +148,7 @@ function TabularData<T = any>({ data, columns, loading, ...props }: Props<T>) {
         <div className="absolute z-10 flex items-center justify-center backdrop-blur-[2px] bottom-0 left-0 w-full md:h-[calc(100%-55px)] h-[calc(100%-45px)]">
           <Loader2
             className={cn(
-              "w-12 h-12 animate-spin dark:text-primary/50 text-primary stroke-[2px] md:stroke-[3px]",
+              "w-12 h-12 animate-spin dark:text-primary/50 text-primary stroke-[2px]",
               props.loaderClassName
             )}
           />

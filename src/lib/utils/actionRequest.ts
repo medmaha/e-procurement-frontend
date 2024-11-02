@@ -11,7 +11,7 @@ export const actionRequest = async <T = any, X = Json>(
   params: RequestProps
 ) => {
   try {
-    const { data: response, status } = await axiosInstance({
+    const { data: responseData, status } = await axiosInstance({
       url: params.url,
       data: params.data,
       method: params.method,
@@ -21,7 +21,7 @@ export const actionRequest = async <T = any, X = Json>(
     if (!params.noRevalidate && params.method !== "get" && params.pathname)
       revalidatePath(params.pathname, "page");
 
-    const { id, data, extras = {}, auth_perms = {} } = response;
+    const { id, data, extras = {}, auth_perms = {} } = responseData;
 
     return {
       id,

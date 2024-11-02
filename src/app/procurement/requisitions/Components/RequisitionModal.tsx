@@ -12,6 +12,7 @@ import {
 import { retrieveRequisition } from "../actions";
 import { useQuery } from "@tanstack/react-query";
 import RequisitionDetail from "./RequisitionDetail";
+import RequisitionInfo from "./RequisitionInfo";
 
 type Props = {
   user: AuthUser;
@@ -71,52 +72,16 @@ export default function RequisitionModal(props: Props) {
             </div> */}
           </DialogHeader>
           <div className="flex-1 block space-y-6 w-full px-4 h-full max-h-[75svh] overflow-hidden overflow-y-auto">
-            <RequisitionDetail
+            {/* <RequisitionDetail
               user={user}
               loading={requisitionQuery.isLoading}
               data={requisitionQuery.data}
-            />
-          </div>
-
-          <div className="py-4 flex flex-wrap justify-between items-center gap-6 px-6">
-            <div className="grid gap-1">
-              <p className="text-lg font-bold">Approval Status</p>
-              <p className="capitalize opacity-60 inline-flex items-center gap-1">
-                <span className="pt-0.5 inline-block">
-                  {requisitionQuery.data?.approval.status.toLowerCase() ==
-                  "pending" ? (
-                    <Loader2
-                      size={"16"}
-                      className={`text-accent-foreground animate-spin`}
-                    />
-                  ) : requisitionQuery.data?.approval.status.toLowerCase() ==
-                    "rejected" ? (
-                    <X size={"16"} className="text-destructive" />
-                  ) : (
-                    <Check size={"16"} className="text-primary" />
-                  )}
-                </span>
-                <span className="opacity-60">
-                  {requisitionQuery.data?.approval.status}
-                </span>
-              </p>
-            </div>
-            {requisitionQuery.data?.approval.status.toLowerCase() ===
-              "pending" && (
-              <div className="grid gap-1">
-                <p className="text-lg font-bold">Approval Stage</p>
-                <p className="capitalize opacity-60 inline-flex items-center gap-1">
-                  <span>
-                    {requisitionQuery.data?.approval.stage}
-                    {["procurement", "finance"].includes(
-                      requisitionQuery.data?.approval.stage.toLowerCase()
-                    )
-                      ? " Department "
-                      : " "}
-                    Approval
-                  </span>
-                </p>
-              </div>
+            /> */}
+            {requisitionQuery.data && (
+              <RequisitionInfo
+                user={user}
+                requisition={requisitionQuery.data}
+              />
             )}
           </div>
         </DialogContent>

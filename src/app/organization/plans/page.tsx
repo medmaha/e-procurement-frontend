@@ -11,6 +11,7 @@ import AddPlan from "./Components/AddDepartmentalPlan";
 import FilterByYear from "./Components/FilterByYear";
 import { RequestAnnualPlanApproval } from "./Components/RequestAnnualPlanApproval";
 import Page404 from "@/app/not-found";
+import ClientSitePage from "@/Components/ui/ClientSitePage";
 
 export const revalidate = 10;
 
@@ -35,21 +36,28 @@ export default async function Page(props: Props) {
   }
   const year = props.searchParams.year;
   const thisYear = new Date().getFullYear().toString();
-  const response = await actionRequest({
+  const response = await actionRequest<AnnualPlan, { dept_perms: AuthPerm }>({
     method: "get",
     url: "/organization/annual-plan/current/" + (year ? "?year=" + year : ""),
   });
   if (!response.success) return <Page404 error={response} />;
 
-  const annualPlan: AnnualPlan = response.data;
+  const annualPlan = response.data;
   const permissions = response.auth_perms;
+
+  const dept_permissions = response.extras.dept_perms;
 
   const NO_ANNUAL_PLAN = Boolean(response.data) === false;
 
-  const userIsAuthor = user.profile_id === annualPlan.officer?.id;
+  const userIsAuthor = user.profile_id === annualPlan?.officer?.id;
 
   return (
     <section className="section">
+          <ClientSitePage
+        page={{
+          title:"Annual Procurement Plan"
+        }}
+      />
       <div className="section-heading">
         <div className="flex justify-between sm:justify-start flex-1 items-center gap-4">
           <h1 className="font-bold text-lg w-max flex text-center">
@@ -80,19 +88,23 @@ export default async function Page(props: Props) {
             />
           </div>
         )}
-        {!!(
-          !annualPlan.request_for_approval_org ||
-          !annualPlan.request_for_approval_org
-        ) && (
+        {!NO_ANNUAL_PLAN && (
           <>
-            {userIsAuthor && annualPlan?.request_for_approval_both && (
-              <div className="flex items-center">
-                <RequestAnnualPlanApproval
-                  annualPlan={annualPlan}
-                  user={user}
-                  requestType={"BOTH"}
-                />
-              </div>
+            {!!(
+              !annualPlan.request_for_approval_org ||
+              !annualPlan.request_for_approval_org
+            ) && (
+              <>
+                {userIsAuthor && annualPlan?.request_for_approval_both && (
+                  <div className="flex items-center">
+                    <RequestAnnualPlanApproval
+                      annualPlan={annualPlan}
+                      user={user}
+                      requestType={"BOTH"}
+                    />
+                  </div>
+                )}
+              </>
             )}
           </>
         )}
@@ -176,7 +188,7 @@ export default async function Page(props: Props) {
                 <span className="font-semibold">In Operation</span>
               </p>
             </div>
-            {permissions.create && (
+            {dept_permissions?.create && (
               <div className="flex items-end">
                 <div className="grid gap-2">
                   <AddPlan />
@@ -191,7 +203,7 @@ export default async function Page(props: Props) {
                 No Department Procurement Plan
               </h3>
               <div className="flex items-center flex-1 justify-center pt-4">
-                {permissions.create && <AddPlan text={"Add One Now!"} />}
+                {dept_permissions?.create && <AddPlan text={"Add One Now!"} />}
               </div>
             </div>
           ) : (

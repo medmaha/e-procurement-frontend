@@ -12,7 +12,9 @@ type Props = {
 };
 
 const RequisitionCardLazy = lazy(() => import("./Components/RequisitionCard"));
-const LazyApprovalComponent = lazy(() => import("./Components/Approval"));
+const LazyRequisitionApproval = lazy(
+  () => import("./Components/RequisitionApproval")
+);
 const LazyRequisitionEditComponent = lazy(
   () => import("./Components/AddOrEditRequisition")
 );
@@ -98,7 +100,7 @@ export default function Container({ user }: Props) {
                 (r) => r.id.toString() === requisition_id.toString()
               )
             );
-            setLazyComponent(LazyApprovalComponent);
+            setLazyComponent(LazyRequisitionApproval);
           }}
         />
       )}
@@ -135,7 +137,7 @@ export default function Container({ user }: Props) {
                           (r) => r.id.toString() === requisition_id.toString()
                         )
                       );
-                      setLazyComponent(LazyApprovalComponent);
+                      setLazyComponent(LazyRequisitionApproval);
                     }}
                   />
                 ))}

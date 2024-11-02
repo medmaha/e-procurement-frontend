@@ -1,3 +1,18 @@
+interface WorkflowApprover {
+    id:ID,
+    name: string
+    avatar?: string
+    job_title?:string
+    unit?: {
+      id:ID,
+      name:string
+      department?:{
+        id:ID,
+        name:string
+      }
+    }
+  }
+
 interface ApprovalMatrixInterface {
   id: ID;
   workflow: WorkflowInterface;
@@ -37,6 +52,7 @@ interface ApprovalWorkflowStepInterface {
   order: number;
   description?: string;
   step: ApprovalStepInterface;
+  workflow?: Partial<WorkflowInterface>;
   author?: {
     id: ID;
     name: string;
@@ -79,5 +95,20 @@ interface ApprovalStepInterface {
 
 
 interface PRApprovalAction {
+  id:ID
 
+  requisition: {
+    id:string
+    title: string
+  }
+  approver: WorkflowApprover
+  workflow_step: ApprovalWorkflowStepInterface
+
+
+  action: RequisitionApprovalStatus
+  comments?:string
+  created_date:string
+  last_modified: string
+
+  
 }

@@ -1,5 +1,5 @@
 "use client";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { toast } from "react-toastify";
 import {
 	AlertDialog,
@@ -15,10 +15,10 @@ import { Button } from "@/Components/ui/button";
 import { MessageCircle } from "lucide-react";
 import { Label } from "@/Components/ui/label";
 import { Textarea } from "@/Components/ui/textarea";
-import { submitForEvaluation } from "../actions";
 
 type Props = {
 	disabled: boolean;
+	isRejected: boolean;
 	defaultValue?: string;
 	updateData: (value: string) => void;
 };
@@ -45,6 +45,10 @@ export default function Comment(props: Props) {
 		<AlertDialog
 			open={isOpen}
 			onOpenChange={(opened) => {
+				if (props.disabled) return;
+
+				props.updateData(comment || "")
+
 				if (!opened) {
 					if ((comment && comment.length >= 5) === false) {
 						setComment(undefined);
@@ -54,12 +58,13 @@ export default function Comment(props: Props) {
 				toggleOpen(opened);
 			}}
 		>
-			<AlertDialogTrigger asChild>
+			<AlertDialogTrigger asChild disabled={props.disabled || props.isRejected}>
 				<Button
 					size="icon-sm"
-					variant={"secondary"}
 					title="Add Comment"
-					className={`rounded-full bg-secondary hover:border ${
+					variant={"secondary"}
+					disabled={props.disabled || props.isRejected}
+					className={`rounded-full bg-secondary hover:border ${props.isRejected && "text-destructive border-destructive"} ${
 						comment ? "text-success" : "hover:bg-card"
 					}`}
 				>

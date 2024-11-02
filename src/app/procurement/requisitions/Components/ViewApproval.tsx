@@ -1,6 +1,6 @@
 "use client";
 import { Check, Loader2, X } from "lucide-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 import { Button } from "@/Components/ui/button";
 import {
@@ -12,13 +12,36 @@ import {
   DialogTrigger,
 } from "@/Components/ui/dialog";
 import { Switch } from "@/Components/ui/switch";
+import { retrieveRequisition } from "../actions";
+import { useQuery } from "@tanstack/react-query";
 
 type Props = {
   requisition: Requisition;
 };
 
-export default function ViewApproval({ requisition }: Props) {
+export default function ViewApproval(props: Props) {
   const [isOpen, setIsOpen] = useState(false);
+
+  const requisitionQuery = useQuery<RequisitionRetrieve>({
+    enabled: isOpen && !!props.requisition?.id,
+    staleTime: Infinity,
+    queryKey: ["requisition", props.requisition.id],
+    queryFn: async () => {
+      const response = await retrieveRequisition(String(requisition.id));
+      if (response.success) {
+        return response.data as RequisitionRetrieve;
+      }
+      throw response;
+    },
+  });
+
+  const requisition = useMemo(() => {
+    return {
+      ...props.requisition,
+      ...requisitionQuery.data,
+    };
+  }, [props.requisition, requisitionQuery.data]);
+
   return (
     <Dialog onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
@@ -39,7 +62,9 @@ export default function ViewApproval({ requisition }: Props) {
             </p>
           </DialogDescription>
         </DialogHeader>
-        {isOpen && <RequisitionApprovalContent requisition={requisition} />}
+        {isOpen && (
+          <RequisitionApprovalContent requisition={requisition as any} />
+        )}
       </DialogContent>
     </Dialog>
   );
@@ -48,7 +73,7 @@ export default function ViewApproval({ requisition }: Props) {
 type ContentProps = {
   hideStatus?: boolean;
   showStatusText?: boolean;
-  requisition: Requisition;
+  requisition: RequisitionRetrieve;
 };
 
 export function RequisitionApprovalContent(props: ContentProps) {
@@ -56,48 +81,39 @@ export function RequisitionApprovalContent(props: ContentProps) {
   return (
     <>
       <div className="py-2 grid grid-cols-4 gap-6 mt-2">
-        {items.map((item) => {
+        {requisition.approvals?.map((approval) => {
           return (
-            <div key={item.name} className="grid gap-1 text-sm">
-              <p className="text text-base">{item.label}</p>
+            <div key={approval.id} className="grid gap-1 text-sm">
+              <p className="text text-base">
+                {approval.workflow_step.step?.name}
+              </p>
               <ApprovedContent
                 showStatusText={showStatusText}
-                data={
-                  requisition.approval[item.name] as InnerRequisitionApproval
-                }
+                data={approval}
               />
             </div>
           );
         })}
       </div>
-      {requisition.approval.status.toLowerCase() === "pending" &&
-        !hideStatus && (
-          <div className="py-2 flex w-full flex-wrap justify-between items-center gap-6 mt-2">
+      {requisition.approval_status === "pending" && !hideStatus && (
+        <div className="py-2 flex w-full flex-wrap justify-between items-center gap-6 mt-2">
+          <div className="grid gap-1">
+            <p className="text-lg font-bold">Status</p>
+            <p className="capitalize opacity-60 inline-flex items-center gap-1">
+              <ApprovedStatus requisition={requisition} animate={true} />
+            </p>
+          </div>
+
+          {requisition.approval_status === "pending" && (
             <div className="grid gap-1">
-              <p className="text-lg font-bold">Status</p>
+              <p className="text-lg font-bold">Approval Stage</p>
               <p className="capitalize opacity-60 inline-flex items-center gap-1">
-                <ApprovedStatus requisition={requisition} animate={true} />
+                <span>{requisition.current_approval_step?.step.name}</span>
               </p>
             </div>
-
-            {requisition.approval.status.toLowerCase() === "pending" && (
-              <div className="grid gap-1">
-                <p className="text-lg font-bold">Approval Stage</p>
-                <p className="capitalize opacity-60 inline-flex items-center gap-1">
-                  <span>
-                    {requisition.approval.stage}
-                    {["procurement", "finance"].includes(
-                      requisition.approval.stage.toLowerCase()
-                    )
-                      ? " Department "
-                      : " "}
-                    Approval
-                  </span>
-                </p>
-              </div>
-            )}
-          </div>
-        )}
+          )}
+        </div>
+      )}
     </>
   );
 }
@@ -111,26 +127,26 @@ function ApprovedStatus({ requisition, animate }: PropsApproval) {
   return (
     <>
       <span className="pt-0.5 inline-block">
-        {requisition.approval.status.toLowerCase() == "pending" ? (
+        {requisition.approval_status == "pending" ? (
           <Loader2
             size={"16"}
             className={`text-accent-foreground ${
               animate ? "animate-spin" : ""
             }`}
           />
-        ) : requisition.approval.status.toLowerCase() == "rejected" ? (
+        ) : requisition.approval_status == "rejected" ? (
           <X size={"16"} className="text-destructive" />
         ) : (
           <Check size={"16"} className="text-primary" />
         )}
       </span>
-      <span className="opacity-60">{requisition.approval.status}</span>
+      <span className="opacity-60">{requisition.approval_status}</span>
     </>
   );
 }
 
 type PropsApprovalContent = {
-  data: InnerRequisitionApproval;
+  data: PRApprovalAction;
   showStatusText?: boolean;
 };
 
@@ -138,52 +154,30 @@ function ApprovedContent({ data, showStatusText }: PropsApprovalContent) {
   return (
     <p
       className={`inline-flex items-center gap-2 ${
-        data.status.toLowerCase() === "accepted"
-          ? "text-green-500"
-          : "text-destructive"
+        data.action === "approved" ? "text-green-500" : "text-destructive"
       }`}
     >
       {data.id ? (
-        <span
-          title={
-            data.status.toLowerCase() === "accepted" ? "Approved" : "Declined"
-          }
-        >
+        <span title={data.action === "approved" ? "Approved" : "Declined"}>
           <Switch
-            checked={data.status.toLowerCase() === "accepted"}
+            checked={data.action === "approved"}
             onCheckedChange={() => {}}
             className="cursor-default h-[22px]"
           />
         </span>
       ) : (
-        <span title="No Approval" className="text-muted-foreground text-sm">
-          {data.status}
+        <span
+          title="No Approval"
+          className="text-muted-foreground text-sm capitalize"
+        >
+          {data.action}
         </span>
       )}
       {data.id && showStatusText && (
         <small className="font-semibold uppercase tracking-wide">
-          {data.status.toLowerCase() === "accepted" ? "Approved" : "Declined"}
+          {data.action === "approved" ? "Approved" : "Declined"}
         </small>
       )}
     </p>
   );
 }
-
-const items = [
-  {
-    label: "Unit Approval",
-    name: "unit_approval",
-  },
-  {
-    label: "Department Approval",
-    name: "department_approval",
-  },
-  {
-    label: "Procurement Department Approval",
-    name: "procurement_approval",
-  },
-  {
-    label: "Finance Finance Approval",
-    name: "finance_approval",
-  },
-] as { label: string; name: keyof Requisition["approval"] }[];

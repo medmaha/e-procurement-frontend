@@ -14,6 +14,7 @@ import ViewUnit from "./Components/UnitDetails";
 import { Unit } from "./types";
 import { generate_unique_id } from "@/lib/helpers/generator";
 import { Input } from "@/Components/ui/input";
+import ClientSitePage from "@/Components/ui/ClientSitePage";
 
 export const metadata: Metadata = {
   title: "Units | E-Procurement",
@@ -60,6 +61,11 @@ export default async function Page() {
   const inactiveUnits = unitByStatus(false);
   return (
     <section className="section">
+      <ClientSitePage
+          page={{
+            title:"Units"
+          }}
+      />
       <div className="section-heading">
         <div className="relative">
           <Input

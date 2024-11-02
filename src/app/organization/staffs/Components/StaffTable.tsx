@@ -9,7 +9,7 @@ import { Badge } from "@/Components/ui/badge";
 import { useQuery } from "@tanstack/react-query";
 import { actionRequest } from "@/lib/utils/actionRequest";
 import { Input } from "@/Components/ui/input";
-import { EditIcon, SearchIcon } from "lucide-react";
+import { CheckIcon, EditIcon, SearchIcon, XIcon } from "lucide-react";
 
 import AddOrEditStaff from "./AddOrEditStaff";
 import StaffActivation from "./StaffActivation";
@@ -189,7 +189,7 @@ function staffColumns(
             {!staff.disabled && perms?.update && (
               <Button
                 onClick={() => updateStaff(staff)}
-                size={"icon"}
+                size={"icon-sm"}
                 variant={"secondary"}
                 title="Edit Staff"
                 className="rounded-full"
@@ -203,19 +203,23 @@ function staffColumns(
                 {!staff.disabled && (
                   <Button
                     onClick={() => activateStaff(staff)}
-                    size={"sm"}
+                    size={"icon-sm"}
+                    className="rounded-full"
                     variant={"destructive"}
+                    title="Disable Staff"
                   >
-                    Disable
+                    <XIcon className="w-5 h-5" />
                   </Button>
                 )}
                 {staff.disabled && (
                   <Button
                     onClick={() => activateStaff(staff)}
-                    size={"sm"}
+                    size={"icon-sm"}
+                    className="rounded-full bg-success hover:bg-success/90"
                     variant={"secondary"}
+                    title="Enable Staff"
                   >
-                    Enable
+                    <CheckIcon className="w-5 h-5" />
                   </Button>
                 )}
               </>

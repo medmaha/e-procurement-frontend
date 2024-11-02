@@ -45,9 +45,9 @@ export default function NegotiateContract(props: Props) {
 					This negotiation will be based on the following RFQ{" "}
 					<Link
 						className="inline hover:underline transition underline-offset-4 hover:text-sky-500"
-						href={"/procurement/rfq/" + quotation.rfq.unique_id}
+						href={"/procurement/rfq/" + quotation.rfq.id}
 					>
-						<b>{quotation.rfq.unique_id}</b>
+						<b>{quotation.rfq.id}</b>
 					</Link>{" "}
 					and Quotation{" "}
 					<Link

@@ -3,6 +3,7 @@ import React from "react";
 import { getAuthenticatedUser } from "@/lib/auth/generics";
 import StaffTable from "./Components/StaffTable";
 import { redirect } from "next/navigation";
+import ClientSitePage from "@/Components/ui/ClientSitePage";
 
 export const metadata: Metadata = {
   title: "Staffs | E-Procurement",
@@ -19,6 +20,11 @@ export default async function Page() {
 
   return (
     <section className="section">
+       <ClientSitePage
+          page={{
+            title:"Staffs"
+          }}
+      />
       <StaffTable user={user} />
     </section>
   );

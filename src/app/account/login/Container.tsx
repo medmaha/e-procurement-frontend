@@ -8,36 +8,52 @@ import { Button } from "@/Components/ui/button";
 export default function Container() {
   const demoAccounts = [
     {
-      email: "admin@mail.com",
+      email: "system.admin@mail.com",
       password: "prc@2k2*",
     },
     {
-      email: "staff@mail.com",
+      email: "ml.drammeh@mail.com",
       password: "prc@2k2*",
     },
     {
-      email: "unit@mail.com",
+      email: "muhammed.darboe@mail.com",
       password: "prc@2k2*",
     },
     {
-      email: "department@mail.com",
+      email: "jainaba.faal@mail.com",
       password: "prc@2k2*",
     },
     {
-      email: "procurement@mail.com",
+      email: "muhammed.sillah@mail.com",
       password: "prc@2k2*",
     },
     {
-      email: "finance@mail.com",
+      email: "ousman.ndure@mail.com",
+      password: "prc@2k2*",
+    },
+
+    {
+      email: "hr.user@mail.com",
       password: "prc@2k2*",
     },
     {
-      email: "account@unionlend.com",
+      email: "mahammed.touray@mail.com",
+      password: "prc@2k2*",
+    },
+    {
+      email: "vendor.a@mail.com",
       password: "prc@2k2*",
       vendor: true,
     },
+
     {
-      email: "account@fundsflow.com",
+      email: "vendor.b@mail.com",
+      password: "prc@2k2*",
+      vendor: true,
+    },
+
+    {
+      email: "vendor.c@mail.com",
       password: "prc@2k2*",
       vendor: true,
     },
@@ -100,7 +116,11 @@ export default function Container() {
           </p>
         </div>
 
-        <Form email={credentials.email} password={credentials.password} />
+        <Form
+          key={credentials?.toString()}
+          email={credentials.email}
+          password={credentials.password}
+        />
       </div>
       <div className="pt-8">
         <p className="text-center text-sm">

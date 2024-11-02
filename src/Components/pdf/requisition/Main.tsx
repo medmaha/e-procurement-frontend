@@ -21,7 +21,7 @@ export default function MainForm(props: Props) {
 			<Header
 				identifier={{
 					location: "",
-					user_department: props.data.officer?.department?.name,
+					user_department: props.data.officer?.department as any,
 					date: props.data.created_date,
 					date_required:
 						(props.data as any).required_date ?? new Date().toISOString(),
@@ -34,17 +34,6 @@ export default function MainForm(props: Props) {
 
 				{/* <SupplierSignature openBy={props.openedBy} /> */}
 			</View>
-			<Approvals
-				approval={{
-					...props.data.approval,
-					expenditure_head:
-						props.data.approval.finance_approval.expenditure_head?.name,
-					total_sum: getTotalSum(),
-				}}
-				authoredBy={props.data.officer.name}
-				remarks={props.data.remarks}
-				officer_id={props.data.officer.id}
-			/>
 			<Text
 				style={styles.pageNumber}
 				render={({ pageNumber, totalPages }) => `${pageNumber} / ${totalPages}`}

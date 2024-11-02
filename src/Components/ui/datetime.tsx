@@ -12,7 +12,7 @@ import { Calendar } from "./calendar";
 
 interface Props extends React.InputHTMLAttributes<HTMLInputElement> {
 	name: string;
-	className?: "";
+	className?: string;
 	disabled?: boolean;
 	required?: boolean;
 	toDate?: Date;

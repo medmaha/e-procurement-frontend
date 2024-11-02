@@ -4,15 +4,6 @@ import { useFormStatus } from "react-dom";
 import { toast } from "react-toastify";
 import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/Components/ui/select";
 import { Label } from "@radix-ui/react-label";
 import MeasurementUnitSelection from "@/Components/widget/MeasurementUnitSelect";
 
@@ -118,6 +109,7 @@ export default function RFQItem({
                   <field.selector
                     idx={idx}
                     required={field.required}
+                    name={`${idx + 1}-${field.name}`}
                     readOnly={props.disabled || field.required}
                     disabled={field.disabled || pending}
                     pending={pending}
@@ -180,8 +172,7 @@ const rfqItemFields: RFQItemField[] = [
     name: "measurement_unit",
     label: "M-Unit",
     required: true,
-    selector: MeasurementUnitSelection, // Replace with your custom selector component
-    placeholder: "$", // Replace with appropriate placeholder text
+    selector: MeasurementUnitSelection,
   },
   {
     type: "text",

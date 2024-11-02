@@ -93,7 +93,7 @@ export default function RequisitionCard({
         </div>
         <div className="flex self-end items-center justify-end gap-4">
           <ViewApproval requisition={requisition} />
-          {requisition.approval.editable && (
+          {requisition.approval_status === "pending" && (
             <>
               {requisition.changeable && (
                 <Button
@@ -107,7 +107,7 @@ export default function RequisitionCard({
               )}
             </>
           )}
-          {requisition.approval.apposable && (
+          {requisition.approval_status && (
             <div className="pt">
               <Button
                 size={"sm"}

@@ -8,6 +8,7 @@ import TabularData from "@/Components/widget/TabularData";
 import { Button } from "@/Components/ui/button";
 import { EditIcon, EyeIcon } from "lucide-react";
 import { generate_unique_id } from "@/lib/helpers/generator";
+import Tooltip from "@/Components/ui/tooltip";
 
 type Props = {
   readonly loading?: boolean;
@@ -144,22 +145,25 @@ const getColumns = (
       },
     },
     {
-      accessorKey: "approval.status",
       header: "Approval",
-      cell: ({ row }) => (
-        <Badge
-          variant={
-            row.original.approval.status?.toLowerCase() === "rejected"
-              ? "destructive"
-              : row.original.approval.status?.toLowerCase() === "accepted"
-              ? "default"
-              : "outline"
-          }
-          className="capitalize"
-        >
-          {row.original.approval.status || "N/A"}
-        </Badge>
-      ),
+      accessorKey: "approval_status",
+      cell: ({ row }) => {
+        const status = row.original.approval_status;
+        return (
+          <Badge
+            variant={
+              status === "pending"
+                ? "outline"
+                : status === "approved"
+                ? "default"
+                : "destructive"
+            }
+            className="capitalize"
+          >
+            {status}
+          </Badge>
+        );
+      },
     },
     {
       accessorKey: "created_date",
@@ -174,42 +178,31 @@ const getColumns = (
       id: "action",
       header: "Action",
       cell: ({ row }) => {
-        const editable = !["accepted", "rejected"].includes(
-          row.original.approval.unit_approval.status.toLowerCase()
-        );
-
-        const stage = `${row.original.approval.stage?.toLowerCase()}_approval`;
+        const editable = false;
 
         return (
           <div className="flex items-center gap-1">
-            <Button
-              onClick={() => viewRequisition?.(row.original.id)}
-              size={"sm"}
-              title="Edit Requisition"
-              variant={"outline"}
-            >
-              <EyeIcon className="w-4 h-4" />
-              View
-            </Button>
+            <Tooltip content="View Requisition">
+              <Button
+                onClick={() => viewRequisition?.(row.original.id)}
+                size={"icon"}
+                className="rounded-full"
+                variant={"secondary"}
+              >
+                <EyeIcon className="w-4 h-4" />
+              </Button>
+            </Tooltip>
             {editable && (
               <Button
                 onClick={() => updateRequisition?.(row.original.id)}
-                size={"sm"}
+                size={"icon"}
                 title="Edit Requisition"
                 variant={"secondary"}
               >
                 <EditIcon className="w-4 h-4" />
-                Edit
               </Button>
             )}
-            {!editable && (
-              <Button disabled size={"sm"} variant={"outline"}>
-                <EditIcon className="w-4 h-4" />
-                Edit
-              </Button>
-            )}
-
-            {row.original.approval.apposable && (
+            {row.original.current_approver?.id === user.profile_id && (
               <Button
                 onClick={() => approveRequisition?.(row.original.id)}
                 size={"sm"}

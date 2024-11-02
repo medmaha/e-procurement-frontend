@@ -12,13 +12,13 @@ import { cn } from "@/lib/ui/utils";
 type Props = {
   name?: string;
   inserts: string[];
-  noColor?:boolean
-  placeholder?:string
+  noColor?: boolean;
+  placeholder?: string;
   defaultValue?: string;
   onChange?: (value: string) => void;
 };
 
-export default function StatusSelection({noColor, ...props}: Props) {
+export default function StatusSelection({ noColor, ...props }: Props) {
   const [value, setValue] = useState(props.defaultValue);
   return (
     <Select
@@ -29,13 +29,23 @@ export default function StatusSelection({noColor, ...props}: Props) {
         props.onChange?.(value);
       }}
     >
-      <SelectTrigger className={cn("w-full sm:w-40 capitalize", (!noColor &&value === "active") && "text-primary", (!noColor && value === "inactive" )&& "text-destructive")}>
+      <SelectTrigger
+        className={cn(
+          "w-full sm:w-40 capitalize",
+          !noColor && value === "active" && "text-primary",
+          !noColor && value === "inactive" && "text-destructive"
+        )}
+      >
         <SelectValue placeholder={props.placeholder || "Filter by status"} />
       </SelectTrigger>
       <SelectContent>
         {props.inserts?.map((item) => {
           return (
-            <SelectItem className="capitalize" value={item.toLowerCase()}>
+            <SelectItem
+              key={item.valueOf()}
+              className="capitalize"
+              value={item.toLowerCase()}
+            >
               {item}
             </SelectItem>
           );

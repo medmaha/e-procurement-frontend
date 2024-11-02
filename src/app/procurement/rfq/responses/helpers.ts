@@ -1,9 +1,11 @@
 //
 
-export function isDeadlineDate(deadline: string) {
-	const today = new Date().getTime();
-	const deadlineDate = new Date(deadline).getTime();
-	return today >= deadlineDate;
+import { isValid, isAfter } from "date-fns";
+
+export function isDeadlineDate(deadline?: string) {
+  if (!deadline || !isValid(new Date(deadline))) return false;
+
+  return isAfter(new Date(), new Date(deadline));
 }
 
 /**
@@ -18,15 +20,13 @@ export function quotationsCanBeEvaluated(quotations: RFQResponse[], user: AuthUs
 	
 	if (!rfq) return null;
 	
-	if (rfq.open_status === true) return null
-	
 	
 	// TODO: Check if user can evaluate the RFQ
 	
 	let isPossible = true;
 	
 	for (const quotation of quotations.slice(1,)) {
-		if (!quotation.rfq.open_status) {
+		if (isDeadlineDate(quotation.rfq?.quotation_deadline_date)) {
 			if (quotation.rfq.id !== rfq?.id) {
 				isPossible = false
 				break

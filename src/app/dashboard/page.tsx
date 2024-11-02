@@ -7,6 +7,7 @@ import ExpenseChart from "./Components/ExpenseChart";
 import LoginsChart from "./Components/LoginsChart";
 import ProcurementChart from "./Components/ProcurementChart";
 import VendorsChart from "./Components/VendorsChart";
+import ClientSitePage from "@/Components/ui/ClientSitePage";
 
 export const revalidate = 5;
 
@@ -19,6 +20,11 @@ export default async function page() {
 
 	return (
 		<section className="p-3 sm:p-6">
+			<ClientSitePage
+				page={{
+					title:"Dashboard"
+				}}
+			/>
 			<div className="p-4 mb-8 bg-card shadow border rounded-md flex items-center justify-between">
 				<div>
 					<h2 className="text-2xl font-bold">

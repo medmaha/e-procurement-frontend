@@ -6,12 +6,14 @@ import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import Tooltip from "../ui/tooltip";
 import { useRouter, useSelectedLayoutSegments } from "next/navigation";
 import Link from "next/link";
+import { usePageStore } from "@/lib/store";
 
 export default function HistorySwitcher({ user }: { user: AuthUser }) {
   const router = useRouter();
   const segments = useSelectedLayoutSegments();
-  const [history, setHistory] = useState<string[]>([]);
   const [loaded, setLoaded] = useState(false);
+
+  const { title } = usePageStore();
 
   const nextRoute = () => {
     if (!hasNext) return;
@@ -23,21 +25,9 @@ export default function HistorySwitcher({ user }: { user: AuthUser }) {
     router.back();
   };
 
-  useEffect(() => {
-    // check if segment is not within cached history
-    if (!history.join("/").includes(segments.join("/"))) {
-      setHistory(segments);
-    }
-    setLoaded(true);
-  }, [segments]);
-
   const currentSegment = segments.at(-1);
-
-  const hasNext = !loaded ? false : history.length > segments.length;
-  const hasPrev = !loaded ? false : segments.length > 0;
-
-  const lastThreeSegments =
-    segments.length > 3 ? segments.slice(segments.length - 3) : segments;
+  const hasNext = true;
+  const hasPrev = true;
 
   return (
     <div className="flex items-center gap-2">
@@ -52,29 +42,7 @@ export default function HistorySwitcher({ user }: { user: AuthUser }) {
           <ChevronLeftIcon className="w-4 h-4" />
         </Button>
       </Tooltip>
-      <h2 className="text-sm">
-        {lastThreeSegments.map((segment, index) => {
-          const isLast = index === segments.length - 1;
-          const isCurrent = currentSegment === segment;
-
-          const href = lastThreeSegments.slice(0, index + 1).join("/");
-
-          return (
-            <Link href={isCurrent ? "#" : `/${href}`} key={`/${segment}`}>
-              <span
-                className={
-                  isCurrent ? " font-semibold" : "text-muted-foreground"
-                }
-              >
-                {segment}
-              </span>
-              {!isLast && (
-                <span className="text-muted-foreground px-0.5">/</span>
-              )}
-            </Link>
-          );
-        })}
-      </h2>
+      <h2 className="font-semibold">{title || "No Page Title"}</h2>
       <Tooltip content="Click to go forward">
         <Button
           className="rounded-md h-max w-max p-2"

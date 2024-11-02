@@ -4,6 +4,7 @@ import { useRef } from "react";
 
 type Props = {
 	disabled: boolean;
+	isRejected: boolean;
 	defaultValue?: NumberOrString;
 	updateData: (value: number) => void;
 };
@@ -12,10 +13,11 @@ export default function Pricing(props: Props) {
 	const inputRef = useRef<HTMLInputElement>(null);
 	return (
 		<Input
+		min={0}
+		name="pricing"
 			ref={inputRef}
-			className="min-w-[80px] w-max"
+			className={`w-[12ch] ${props.isRejected ? "cursor-not-allowed placeholder:text-destructive" : ""}`}
 			type="number"
-			min={0}
 			title={inputRef.current?.value}
 			placeholder="GMD"
 			disabled={props.disabled}

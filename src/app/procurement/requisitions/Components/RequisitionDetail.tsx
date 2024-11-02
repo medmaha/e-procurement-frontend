@@ -70,14 +70,14 @@ export default function RequisitionDetail(props: Props) {
         <div className="grid">
           <p className="text-sm font-semibold leading-none">Department</p>
           <p
-            title={data?.officer?.department?.name}
+            title={data?.officer_department?.name}
             className="text-xs text-muted-foreground pt-0.5 truncate"
           >
             <Link
-              href={`/organization/staffs/${data?.officer?.department.id}`}
+              href={`/organization/staffs/${data?.officer_department?.id}`}
               className="transition hover:underline underline-offset-4 truncate"
             >
-              {data?.officer?.department?.name}
+              {data?.officer_department?.name}
             </Link>
           </p>
         </div>
@@ -87,7 +87,8 @@ export default function RequisitionDetail(props: Props) {
             Procurement Method
           </p>
           <p className="text-sm text-muted-foreground pt-0.5 uppercase">
-            {data?.approval?.procurement_method}
+            {/* {data.procurement_method} */}
+            No Procurement Method
           </p>
         </div>
 

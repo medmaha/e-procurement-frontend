@@ -23,10 +23,11 @@ export default function MeasurementUnitSelection(props: Props) {
   const { disabled, required, value, name } = props;
   return (
     <Select
-      defaultValue={value}
+      key={props.value}
+      defaultValue={props.value?.toLowerCase()}
       disabled={disabled}
       required={required}
-      name={name || "measurement_unit"}
+      name={name}
     >
       <SelectTrigger
         className={cn(
@@ -52,7 +53,11 @@ export default function MeasurementUnitSelection(props: Props) {
           {(props.readOnly ? [value || UNITS_TYPES[0]] : UNITS_TYPES).map(
             (type) => {
               return (
-                <SelectItem key={type} value={type} className="capitalize">
+                <SelectItem
+                  key={type}
+                  value={type.toLowerCase()}
+                  className="capitalize"
+                >
                   {type}
                 </SelectItem>
               );
@@ -72,4 +77,9 @@ const UNITS_TYPES = [
   "litres",
   "metres",
   "inches",
+  "ounces",
+  "pounds",
+  "feet",
+  "yards",
+  "miles",
 ];

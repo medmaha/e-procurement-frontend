@@ -3,7 +3,7 @@
 import { AxiosHeaders } from "axios";
 import { actionRequest } from "@/lib/utils/actionRequest";
 
-export async function submitRFQResponse(data: FormData, pathname: string) {
+export async function submitRFQResponse(data: Json, pathname: string) {
 	return actionRequest({
 		data,
 		pathname,

@@ -9,6 +9,8 @@ import { Badge } from "@/Components/ui/badge";
 import ActionConfirmation from "@/Components/ActionConfirmation";
 import { Button } from "@/Components/ui/button";
 import ApproveContract from "./ApproveContract";
+import { generate_unique_id } from "@/lib/helpers/generator";
+import ClientSitePage from "@/Components/ui/ClientSitePage";
 
 type Props = {
   user: AuthUser;
@@ -33,67 +35,47 @@ export default function AwardContract(props: Props) {
 
   return (
     <>
-      <div className="section-heading !mb-4">
-        {props.children}
-        <div className="">
-          <h1 className="header-text text-xl sm:text-2xl md:text-3xl font-bold">
-            {!props.contract ? "Create Contract" : "Contract Award"} for{" "}
-            <Link
-              className="inline text-muted-foreground hover:underline transition underline-offset-[6px] hover:text-sky-500"
-              href={"/procurement/rfq/responses/" + quotation.unique_id}
-            >
-              <b>(Quotation Q-{quotation.unique_id})</b>
-            </Link>{" "}
-          </h1>
-        </div>
-      </div>
-
       <div>
+        <ClientSitePage
+          page={{
+            title: "RFQ Contract",
+            description: "Award a contract to a supplier",
+          }}
+        />
         <div className="section-content">
           <div className="flex justify-between w-full items-center gap-4 flex-wrap">
             <div className="">
-              <div className="">
-                <h2 className="font-semibold sm:text-lg">
-                  {props.contract ? (
-                    <Badge className="" variant={"success"}>
-                      Contracted
-                    </Badge>
-                  ) : (
-                    "Contract Award"
-                  )}
-                </h2>
-                <p className="text-muted-foreground max-w-[60ch] pt-1 text-sm leading-relaxed">
-                  {!props.contract ? (
-                    <>
-                      This contract will be based on the following objects{" "}
-                      <Link
-                        className="inline hover:underline transition underline-offset-4 hover:text-sky-500"
-                        href={"/procurement/rfq/" + quotation.rfq.unique_id}
-                      >
-                        <b>({quotation.rfq.unique_id})</b>
-                      </Link>{" "}
-                      and{" "}
-                      <Link
-                        className="inline hover:underline transition underline-offset-4 hover:text-sky-500 whitespace-nowrap"
-                        href={
-                          "/procurement/rfq/responses/" + quotation.unique_id
-                        }
-                      >
-                        <b>(Quotation Q-{quotation.unique_id})</b>{" "}
-                      </Link>{" "}
-                      which was submitted by{" "}
-                      <Link
-                        className="inline hover:underline transition underline-offset-4 hover:text-sky-500"
-                        href={"/suppliers/" + quotation.vendor.id}
-                      >
-                        <b>{quotation.vendor.name}</b>
-                      </Link>
-                    </>
-                  ) : (
-                    <>This quotation has already been contracted</>
-                  )}
-                </p>
-              </div>
+              <p className="text-muted-foreground max-w-[60ch] pt-1 text-sm leading-relaxed">
+                {!props.contract ? (
+                  <>
+                    This contract will be based on the following objects{" "}
+                    <Link
+                      className="inline hover:underline transition underline-offset-4 hover:text-sky-500"
+                      href={"/procurement/rfq/" + quotation.rfq.id}
+                    >
+                      <b>({generate_unique_id("RFQ", quotation.rfq.id)})</b>
+                    </Link>
+                    {" and "}
+                    <Link
+                      className="inline hover:underline transition underline-offset-4 hover:text-sky-500 whitespace-nowrap"
+                      href={"/procurement/rfq/responses/" + quotation.unique_id}
+                    >
+                      <b>
+                        (Quotation {generate_unique_id("QR", quotation.id)})
+                      </b>
+                    </Link>{" "}
+                    which was submitted by{" "}
+                    <Link
+                      className="inline hover:underline transition underline-offset-4 hover:text-sky-500"
+                      href={"/suppliers/" + quotation.vendor.id}
+                    >
+                      <b>{quotation.vendor.name}</b>
+                    </Link>
+                  </>
+                ) : (
+                  <>This quotation has already been contracted</>
+                )}
+              </p>
             </div>
 
             {props.contract && !props.contract.approvable && (
@@ -104,8 +86,8 @@ export default function AwardContract(props: Props) {
             )}
           </div>
         </div>
-        <div className="section-content !p-0 overflow-hidden">
-          <h2 className="font-semibold p-2 text-lg border-b text-center bg-accent text-accent-foreground">
+        <div className="overflow-hidden border shadow-md mb-4 rounded-md">
+          <h2 className="font-semibold p-2 text-lg border-b text-center bg-accent/50 text-accent-foreground">
             Quotation Details
           </h2>
           <div className="px-2 sm:px-4 pb-4">
@@ -126,10 +108,11 @@ export default function AwardContract(props: Props) {
                   )}
                 </p>
               </div>
-
               <div className="grid">
-                <p className="font-semibold">Delivery Period</p>
-                <p className="">{quotation.delivery_terms}</p>
+                <p className="font-semibold">Delivery Date</p>
+                <p className="">
+                  {format(new Date(quotation.delivery_date), "PPpp")}
+                </p>
               </div>
               <div className="grid">
                 <p className="font-semibold">Payment Method</p>
@@ -139,65 +122,28 @@ export default function AwardContract(props: Props) {
                 <p className="font-semibold">RFQ ID</p>
                 <p className="">
                   <Link
-                    href={"/procurement/rfq/" + quotation.rfq.unique_id}
+                    href={"/procurement/rfq/" + quotation.rfq.id}
                     className="hover:underline transition underline-offset-4 hover:text-sky-500"
                   >
-                    {quotation.rfq.unique_id}
+                    {generate_unique_id("RFQ", quotation.rfq.id)}
                   </Link>
                 </p>
               </div>
-              <div className="grid">
-                <p className="font-semibold">RFQ Deadline Date</p>
-                <p className="">
-                  {formatDistanceToNow(new Date(quotation.deadline), {
-                    includeSeconds: true,
-                    addSuffix: true,
-                  })}
+              <div className="">
+                <p className="font-semibold">Quotation Submission Date</p>
+                <p className="text-muted-foreground text-xs leading-relaxed">
+                  {format(new Date(quotation.created_date), "PPPPp")}
                 </p>
-              </div>
-              <div className="grid">
-                <p className="font-semibold">RFQ Created Date</p>
-                <p className="">
-                  {format(new Date(quotation.created_date), "PPPpp")}
-                </p>
-              </div>
-              {/* <div className="grid">
-									<p className="font-semibold">RFQ Status</p>
-									<p className="">
-										{quotation.rfq.open_status ? (
-											<span className="text-green-500">OPEN</span>
-										) : (
-											<span className="text-destructive dark:text-red-400">
-												CLOSED
-											</span>
-										)}
-									</p>
-								</div> */}
-              <div className="pt-2 border-t col-span-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                <div className="grid sm:col-span-2">
-                  <p className="font-semibold">Quotation Terms/Remarks</p>
-                  <p className="text-muted-foreground text-xs pt-1 leading-relaxed">
-                    {quotation.remarks}
-                  </p>
-                </div>
-                <div className="grid">
-                  <div className="">
-                    <p className="font-semibold">Quotation Submission Date</p>
-                    <p className="text-muted-foreground text-xs leading-relaxed">
-                      {format(new Date(quotation.created_date), "PPPPp")}
-                    </p>
-                  </div>
-                </div>
               </div>
             </div>
           </div>
         </div>
 
         <form action={submitContract}>
-          <div className="section-content !p-0 overflow-hidden">
+          <div className="overflow-hidden border shadow-md rounded-md">
             <input type="hidden" name="quotation_id" value={quotation.id} />
             <input type="hidden" name="rfq_id" value={quotation.rfq.id} />
-            <h2 className="font-semibold p-2 text-lg border-b text-center bg-accent text-accent-foreground">
+            <h2 className="font-semibold p-2 text-lg border-b text-center bg-accent/50 text-accent-foreground">
               Contract Details
             </h2>
             <div className="px-2 sm:px-4 py-4 space-y-4">
@@ -209,7 +155,9 @@ export default function AwardContract(props: Props) {
                   >
                     Officer
                   </Label>
-                  <p className="p-2 rounded-sm border text-sm">{user.name}</p>
+                  <p className="p-2 rounded-sm border bg-accent/30 text-sm">
+                    {user.name}
+                  </p>
                 </div>
                 <div className="grid gap-1">
                   <Label
@@ -218,7 +166,7 @@ export default function AwardContract(props: Props) {
                   >
                     Vendor
                   </Label>
-                  <p className="p-2 rounded-sm border text-sm">
+                  <p className="p-2 rounded-sm border bg-accent/30 text-sm">
                     {quotation.vendor.name}
                   </p>
                 </div>
@@ -229,7 +177,7 @@ export default function AwardContract(props: Props) {
                   >
                     Quotation
                   </Label>
-                  <p className="p-2 rounded-sm border text-sm">
+                  <p className="p-2 rounded-sm border bg-accent/30 text-sm">
                     Q-{quotation.unique_id}
                   </p>
                 </div>
@@ -245,6 +193,7 @@ export default function AwardContract(props: Props) {
                 ) : (
                   <Textarea
                     required
+                    autoFocus
                     minLength={50}
                     maxLength={1000}
                     placeholder="write your terms and conditions here..."
