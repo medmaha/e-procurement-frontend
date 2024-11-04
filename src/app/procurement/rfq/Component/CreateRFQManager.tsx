@@ -10,7 +10,7 @@ import { Textarea } from "@/Components/ui/textarea";
 import OpenedBy from "@/Components/widget/OpenedBy";
 import RequisitionSelect from "@/Components/widget/RequisitionSelect";
 import SubmitButton from "@/Components/widget/SubmitButton";
-import SupplierSelect from "@/Components/widget/VendorsSelect";
+import SupplierSelect from "@/Components/widget/SupplierSelect";
 import { transformFormDataWithItems } from "@/lib/helpers";
 import { generateHex } from "@/lib/utils/generators";
 import { Label } from "@radix-ui/react-label";
@@ -154,7 +154,10 @@ export default function CreateRFQManager(props: Props) {
             </span>
           </Label>
 
-          <SupplierSelect open={isOpen} isMulti defaultValue={rfq?.suppliers} />
+          <SupplierSelect
+            isMulti
+            defaultValue={rfq?.suppliers.map((supplier) => supplier.id.toString())}
+          />
         </div>
 
         <div className="grid gap-1 col-span-1">

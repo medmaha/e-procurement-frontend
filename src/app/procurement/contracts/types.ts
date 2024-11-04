@@ -1,119 +1,66 @@
-interface RFQContract {
-  id: ID;
-  delivery_terms?: string;
-  payment_method?: string;
-  validity_period?: string;
-  pricing?: number;
+// Supplier Interface
+interface Supplier {
+  id: number;
+  name: string;
+  logo?: string;
+  short_desc?: string;
+}
 
-  deadline_date?: string;
+interface Officer {
+  id: ID;
+  name: string;
+  avatar?: string;
+  job_title?: string;
+}
+
+// ContractDocument Interface
+interface ContractAttachment {
+  id: ID;
+  name: string;
+  document_url: string; // URL or file path to access the document
+  uploaded_at: string; // ISO date string for the upload date
+}
+
+interface Quotation {
+  id: ID;
+  rfq_id: ID;
+  delivery_date: string;
+  created_date: string;
+  pricing: number;
+  evaluation_status: "AWARDED" | "PENDING" | "REJECTED";
+  vendor: Vendor;
+}
+
+interface Contract {
+  id: ID;
+  title: string;
+  description: string;
+  start_date?: string;
+  end_date?: string;
+  status: "Draft" | "Pending Approval" | "Active" | "Completed" | "Terminated";
+
+  award?: ID;
+  payment_terms: string;
+  delivery_schedule: string;
   terms_and_conditions: string;
-  status: "PENDING" | "SUCCESSFUL" | "UNSUCCESSFUL" | "ACTIVE" | "TERMINATED";
+  confidentiality_clause: boolean;
+  penalty_clause?: number;
 
-  rfq: {
-    id: ID;
-    name: string;
-  };
-  supplier: {
-    id: ID;
-    name: string;
-  };
-  rfq_response: {
-    id: ID;
-    name: string;
-  };
-  officer: {
-    id: ID;
-    name: string;
-  };
-  negotiations: any;
+  approval_status: "approved" | "pending" | "rejected";
+  approval_date?: string;
+  approval_remarks?: string;
+  terminated_reason?: string;
+  terminated_date?: string;
 
   created_date: string;
-  last_modified: string;
-}
+  last_updated: string;
 
-interface RFQNegotiationNote {
-  id: ID;
-  note: string;
-  file?: string;
-  pricing: string;
-  delivery_terms: string;
-  payment_method: string;
-  validity_period: string;
-  accepted: boolean;
-  renegotiated: boolean;
+  approved_by?: Officer;
+  terminated_by?: Officer;
 
-  contract: {
-    id: ID;
-    name: string;
-  };
-  author: {
-    id: ID;
-    name: string;
-    profile_type: "Vendor" | "Staff";
-  };
-  created_date: string;
-  last_modified: string;
-}
+  attachments: ContractAttachment[];
 
-interface RFQContractNegotiation {
-  id: ID;
-  notes: RFQNegotiationNote[];
-  outcome: string;
-  status: "PENDING" | "SUCCESSFUL" | "UNSUCCESSFUL";
-  can_award?: boolean;
-  supplier: {
-    id: ID;
-    name: string;
-  };
-  contract: {
-    id: ID;
-    name: string;
-  };
-  rfq: {
-    id: ID;
-    name: string;
-  };
-  officer: {
-    id: ID;
-    name: string;
-  };
-  created_date: string;
-  last_modified: string;
-}
-
-interface RFQContractAward {
-  id: ID;
-  remarks?: string | null;
-  status: "PENDING" | "AWARDED" | "TERMINATED";
-  contract: {
-    id: ID;
-    name: string;
-  };
-  vendor: {
-    id: ID;
-    name: string;
-  };
-  officer: {
-    id: ID;
-    name: string;
-  };
-
-  created_date: string;
-  last_modified: string;
-}
-interface ContractApproval {
-  id: ID;
-  remarks?: string | null;
-  approve: ApprovalStatus;
-  contract: {
-    id: ID;
-    name: string;
-    pricing: number;
-  };
-  officer: {
-    id: ID;
-    name: string;
-  };
-  created_date: string;
-  last_modified: string;
+  supplier: Supplier;
+  officer: Officer;
+  quotation: Quotation | null;
 }

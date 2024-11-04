@@ -12,12 +12,13 @@ type Props = {
 };
 
 export default function ClientSitePage(props: Props) {
-
   const { setTitle } = usePageStore();
+
+  const pathname = usePathname();
 
   useLayoutEffect(() => {
     setTitle(props.page.title);
-  }, [props.page]);
+  }, [props.page, pathname]);
 
   return null;
 }

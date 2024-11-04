@@ -17,7 +17,7 @@ interface QuotationItem {
 interface Quotation {
 	id: ID;
 	is_new: boolean;
-	rfq_id: string;
+	rfq_id: ID;
 	rfq: {
 		id: ID;
 		unique_id: string;

@@ -1,6 +1,5 @@
 "use client";
 import { getAuthGroupSelection } from "./actions";
-import MultipleSelectBox from "../ui/multi-select";
 import { Select, SelectContent, SelectItem, SelectTrigger } from "../ui/select";
 import { useQuery } from "@tanstack/react-query";
 
@@ -63,11 +62,11 @@ export default function AuthGroupSelection(props: Props) {
 
   return (
     <>
-      <MultipleSelectBox
+      {/* <MultipleSelectBox
         name="group_ids"
         options={groupQuery.data || []}
         defaultValues={transformData(props.defaultValue || [])}
-      />
+      /> */}
     </>
   );
 }

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Label } from "@/Components/ui/label";
 import { getPermissions } from "../actions";
 import { Permission } from "../types";
-import MultipleSelectBox from "@/Components/ui/multi-select";
+import {} from "@/Components/ui/multi-select";
 
 type Props = {
   perms?: Permission[];
@@ -42,7 +42,7 @@ export default function PermissionSelector({ perms }: Props) {
     <div className="grid gap-2 h-max max-h-[40svh] p-1 overflow-hidden overflow-y-auto">
       <Label>Select Permissions</Label>
       <div className="pr-1">
-        <MultipleSelectBox
+        {/* <MultipleSelectBox
           inputPlaceholder="Search for permissions"
           name="permissions"
           defaultValues={perms?.map((p) => ({
@@ -50,7 +50,7 @@ export default function PermissionSelector({ perms }: Props) {
             value: p.id.toString(),
           }))}
           options={permissions}
-        />
+        /> */}
       </div>
     </div>
   );

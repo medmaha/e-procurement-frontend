@@ -4,6 +4,7 @@ import { cookies } from "next/headers";
 import APP_COMPANY from "@/APP_COMPANY";
 import TopNavigationBar from "@/Components/Navbar/Index";
 import ClientLayout from "../Components/ClientLayout";
+import { SidebarProvider, SidebarTrigger } from "@/Components/ui/sidebar";
 
 import type { Metadata } from "next";
 import { validateAndDecodeJWT } from "@/lib/auth/generics";
@@ -11,17 +12,14 @@ import {
   ACCESS_TOKEN_COOKIE_NAME,
   REFRESH_TOKEN_COOKIE_NAME,
 } from "@/lib/auth/constants";
-import { lazy, Suspense } from "react";
+import { AppSidebar } from "@/Components/AppSideBar/Index";
+import { Toaster } from "@/Components/ui/sonner";
 const inter = Poppins({ weight: "400", preload: true, subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "E-Procurement",
   description: "E-procurement site offered by " + APP_COMPANY.provider.name,
 };
-
-const AsideNavigation = lazy(
-  () => import("@/Components/Navbar/AsideNavigation")
-);
 
 export default function RootLayout({ children }: any) {
   const session = getAuthUser();
@@ -34,41 +32,53 @@ export default function RootLayout({ children }: any) {
         {/* <body className={"transition-[background-color,color]"}> */}
         <ClientLayout theme={theme} session={session}>
           {session ? (
-            <div className={`grid ${session ? "grid-cols-[auto,1fr]" : ""}`}>
-              {session && (
+            <div className={`grid`}>
+              {/* {session && (
                 <Suspense fallback={<div className="border-r h-full"></div>}>
                   <AsideNavigation user={session} />
                 </Suspense>
-              )}
-              <div className="grid min-h-[100svh] grid-rows-[auto,1fr,auto]">
-                <Header session={session} />
-
-                <Main page={children} />
-                <Footer />
-              </div>
+              )} */}
+              <SidebarProvider>
+                <AppSidebar />
+                <Main>
+                  <Header session={session}>
+                    <SidebarTrigger />
+                  </Header>
+                  {children}
+                </Main>
+              </SidebarProvider>
             </div>
           ) : (
-            <div className="grid min-h-[100svh] grid-rows-[auto,1fr,auto]">
-              <Header session={session} />
-              <Main page={children} />
+            <div className="grid min-h-[100svh]">
+              <Main>
+                <SidebarTrigger />
+                <Header />
+                {children}
+              </Main>
               <Footer />
             </div>
           )}
         </ClientLayout>
+        <Toaster />
       </body>
     </html>
   );
 }
 
-function Header({ session }: any) {
+function Header({ session, children }: any) {
   const theme = cookies().get("theme")?.value ?? "light";
-  return <TopNavigationBar session={session} theme={theme} />;
+  return (
+    <header className="flex gap-4 h-[60px] md:px-6 px-2 sm:px-4 items-center sticky border-b top-0 z-10 bg-card bg-opacity-50 backdrop-blur-[3px]">
+      {children}
+      <TopNavigationBar session={session} theme={theme} />
+    </header>
+  );
 }
 
-function Main({ page }: any) {
+function Main({ children }: any) {
   return (
     <main className="bg-background text-foreground relative w-full block overflow-x-hidden">
-      {page}
+      {children}
     </main>
   );
 }

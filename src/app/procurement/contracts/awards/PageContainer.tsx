@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { ChevronDown, ChevronUp, Search } from "lucide-react";
+import { ChevronDown, ChevronUp, PlusIcon, Search } from "lucide-react";
 import { Input } from "@/Components/ui/input";
 import { Button } from "@/Components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/Components/ui/avatar";
@@ -103,6 +103,14 @@ export default function PageContainer({ data, permissions, user }: Props) {
                       }
                     >
                       Approve
+                    </Button>
+                  )}
+                  {!award.contract && permissions.create && (
+                    <Button
+                      size={"sm"}
+                    >
+                      <PlusIcon size={16} />
+                      Draft Contract
                     </Button>
                   )}
                   <span
@@ -214,6 +222,22 @@ export default function PageContainer({ data, permissions, user }: Props) {
                       </dt>
                       <dd className="mt-1 text-sm text-muted-foreground flex items-center">
                         <StaffAvatar staff={award.officer} />
+                      </dd>
+                    </div>
+                    <div className="">
+                      <dt className="text-sm font-medium text-accent-foreground/80">
+                        Approver
+                      </dt>
+                      <dd className="mt-1 text-sm text-muted-foreground flex items-center">
+                        {award.approval ? (
+                          <div className="flex items-center gap-2">
+                            <StaffAvatar staff={award.approval.officer} />
+                          </div>
+                        ) : (
+                          <span className="text-muted-foreground text-sm">
+                            No approval information
+                          </span>
+                        )}
                       </dd>
                     </div>
                     {award.status === "PENDING" && permissions.approve && (
