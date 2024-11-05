@@ -39,7 +39,7 @@ export default function RootLayout({ children }: any) {
                 </Suspense>
               )} */}
               <SidebarProvider>
-                <AppSidebar />
+                <AppSidebar user={session} />
                 <Main>
                   <Header session={session}>
                     <SidebarTrigger />
@@ -51,7 +51,7 @@ export default function RootLayout({ children }: any) {
           ) : (
             <div className="grid min-h-[100svh]">
               <Main>
-                <SidebarTrigger />
+                {/* <SidebarTrigger /> */}
                 <Header />
                 {children}
               </Main>
