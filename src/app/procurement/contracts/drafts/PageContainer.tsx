@@ -11,105 +11,13 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 
 // Interfaces
-interface Supplier {
-  id: number;
-  name: string;
-  logo: string;
-  short_desc?: string;
+interface Props {
+  user: AuthUser;
+  permissions: AuthPerm;
+  contracts: Contract[];
 }
 
-interface ContractDocument {
-  id: number;
-  title: string;
-  document_url: string;
-  uploaded_at: string;
-}
-
-interface ContractTermination {
-  id: string;
-  contract_id: string;
-  reason: string;
-  terminated_date: string;
-}
-
-interface User {
-  id: string;
-  name: string;
-  avatar: string;
-}
-
-interface Contract {
-  id: string;
-  supplier: Supplier;
-  title: string;
-  description?: string;
-  start_date: string;
-  end_date: string;
-  status: "Draft" | "Pending Approval" | "Active" | "Completed" | "Terminated";
-  payment_terms: string;
-  delivery_schedule: string;
-  terms_and_conditions: string;
-  confidentiality_clause: boolean;
-  penalty_clause: number;
-  contract_document_url?: string;
-  additional_documents: ContractDocument[];
-  approved_by?: User;
-  approval_remarks?: string;
-  approval_date?: string;
-  last_updated: string;
-  created_date: string;
-  terminations?: ContractTermination[];
-}
-
-// Mock data for existing contract drafts
-const mockContractDrafts: Contract[] = [
-  {
-    id: "CD001",
-    supplier: {
-      id: 1,
-      name: "Tech Solutions Inc.",
-      logo: "/placeholder.svg?height=40&width=40",
-      short_desc: "IT Services Provider",
-    },
-    title: "Annual IT Support Contract",
-    description: "Comprehensive IT support for all company systems",
-    start_date: "2023-07-01",
-    end_date: "2024-06-30",
-    status: "Draft",
-    payment_terms: "Monthly payments, Net 30",
-    delivery_schedule: "Ongoing support with 24/7 availability",
-    terms_and_conditions: "Standard terms apply",
-    confidentiality_clause: true,
-    penalty_clause: 5000,
-    additional_documents: [],
-    last_updated: "2023-06-15T10:30:00Z",
-    created_date: "2023-06-10T09:00:00Z",
-  },
-  {
-    id: "CD002",
-    supplier: {
-      id: 2,
-      name: "Office Supplies Co.",
-      logo: "/placeholder.svg?height=40&width=40",
-      short_desc: "Office Equipment Supplier",
-    },
-    title: "Office Furniture Supply Agreement",
-    description: "Supply of ergonomic office furniture",
-    start_date: "2023-08-01",
-    end_date: "2024-07-31",
-    status: "Draft",
-    payment_terms: "50% upfront, 50% on delivery",
-    delivery_schedule: "Phased delivery over 3 months",
-    terms_and_conditions: "Custom terms negotiated",
-    confidentiality_clause: false,
-    penalty_clause: 2000,
-    additional_documents: [],
-    last_updated: "2023-06-20T14:45:00Z",
-    created_date: "2023-06-18T11:20:00Z",
-  },
-];
-
-export default function PageContainer() {
+export default function PageContainer(props: Props) {
   const [searchTerm, setSearchTerm] = useState("");
   const [expandedDraft, setExpandedDraft] = useState<string | null>(null);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
@@ -117,14 +25,14 @@ export default function PageContainer() {
     status: "Draft",
     confidentiality_clause: false,
     penalty_clause: 0,
-    additional_documents: [],
+    attachments: [],
   });
 
   const toggleExpand = (id: string) => {
     setExpandedDraft(expandedDraft === id ? null : id);
   };
 
-  const filteredDrafts = mockContractDrafts.filter(
+  const filteredDrafts = props.contracts.filter(
     (draft) =>
       draft.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       draft.supplier.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -140,7 +48,7 @@ export default function PageContainer() {
       status: "Draft",
       confidentiality_clause: false,
       penalty_clause: 0,
-      additional_documents: [],
+      attachments: [],
     });
   };
 
@@ -174,7 +82,7 @@ export default function PageContainer() {
           <li key={draft.id} className="border rounded-lg shadow-sm">
             <div
               className="flex items-center justify-between p-4 cursor-pointer"
-              onClick={() => toggleExpand(draft.id)}
+              onClick={() => toggleExpand(draft.id.toString())}
             >
               <div className="flex items-center space-x-4">
                 <Avatar>
@@ -258,7 +166,7 @@ export default function PageContainer() {
                       Penalty Clause
                     </dt>
                     <dd className="mt-1 text-sm text-muted-foreground">
-                      ${draft.penalty_clause.toLocaleString()}
+                      ${draft.penalty_clause?.toLocaleString() || "N/A"}
                     </dd>
                   </div>
                   <div className="sm:col-span-2">
@@ -271,10 +179,16 @@ export default function PageContainer() {
                   </div>
                 </dl>
                 <div className="mt-4 flex justify-end space-x-2">
-                  <Button variant="outline">
-                    <FileText className="mr-2 h-4 w-4" /> View Full Draft
-                  </Button>
-                  <Button>Edit Draft</Button>
+                  <Link href={`/contracts/drafts/${draft.id}`}>
+                    <Button variant="outline">
+                      <FileText className="mr-2 h-4 w-4" /> View Full Draft
+                    </Button>
+                  </Link>
+                  [props.user.profile_id === draft.office.id &&
+                  <Link href={`/contracts/drafts/${draft.id}?edit=true`}>
+                    <Button>Edit Draft</Button>
+                  </Link>
+                  ]
                 </div>
               </motion.div>
             )}
