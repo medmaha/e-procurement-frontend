@@ -65,7 +65,10 @@ export default function Container() {
   });
 
   return (
-    <div className="pt-20 grid gap-5 lg:grid-cols-[auto_1fr]" id="login">
+    <div
+      className="grid items-center gap-5 lg:grid-cols-[1fr_auto] container mx-auto"
+      id="login"
+    >
       <div className="flex flex-col items-center justify-center p-4">
         <h3 className="">
           For demo purposes, you may try the accounts listed below
@@ -108,7 +111,7 @@ export default function Container() {
           </tbody>
         </table>
       </div>
-      <div className="block w-full max-w-[600px] sm:p-6 p-4 mx-auto bg-card text-card-foreground shadow rounded-md border-2">
+      <div className="block w-full h-max max-w-[500px] sm:p-6 p-4 mx-auto bg-card text-card-foreground shadow rounded-md border-2">
         <div className="text-center pb-6">
           <h2 className="font-bold text-2xl">E-Procurement Portal</h2>
           <p className="text-sm">

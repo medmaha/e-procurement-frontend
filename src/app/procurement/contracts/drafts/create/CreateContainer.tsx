@@ -27,6 +27,8 @@ import { generate_unique_id } from "@/lib/helpers/generator";
 
 type Props = {
   user: AuthUser;
+  award_id?: ID;
+  vendor_id?: ID;
   contract?: Contract;
   hideTitle?: boolean;
   onSuccess?: () => void;
@@ -57,10 +59,13 @@ export default function CreateContainer(props: Props) {
   } = useForm<Inputs>({
     defaultValues: {
       ...props.contract,
-      award: props.contract?.award
+      award: props.award_id
+        ? generate_unique_id("AWD", props.award_id)
+        : props.contract?.award
         ? generate_unique_id("AWD", props.contract?.award)
         : undefined,
-      supplier: props.contract?.supplier?.id.toString(),
+      supplier:
+        props.vendor_id?.toString() || props.contract?.supplier?.id.toString(),
     },
   });
 
@@ -107,15 +112,24 @@ export default function CreateContainer(props: Props) {
       })) as any;
       const response = await props.handleCreateContract(data);
       if (response.success) {
-        toast(response.message || !props.contract? "Contract has been created." : "You contract has been updated successfully", {
-          duration: 5_000,
-          description: format(new Date(), "PPPPp"),
-          action: !props.contract ? {
-            label: "View Details",
-            onClick: () =>
-              router.push(`/procurement/contracts/drafts/${response.data.id}`),
-          }: undefined,
-        });
+        toast(
+          response.message || !props.contract
+            ? "Contract has been created."
+            : "You contract has been updated successfully",
+          {
+            duration: 5_000,
+            description: format(new Date(), "PPPPp"),
+            action: !props.contract
+              ? {
+                  label: "View Details",
+                  onClick: () =>
+                    router.push(
+                      `/procurement/contracts/drafts/${response.data.id}`
+                    ),
+                }
+              : undefined,
+          }
+        );
         if (props.onSuccess) {
           props.onSuccess();
           router.refresh();
@@ -203,7 +217,7 @@ export default function CreateContainer(props: Props) {
               <div>
                 <Label htmlFor="supplier">Supplier</Label>
                 <SupplierSelect
-                  defaultValue={props.contract?.supplier?.id}
+                  defaultValue={defaultValues?.supplier}
                   onValueChange={(value) =>
                     setValue("supplier", value.toString())
                   }
@@ -297,7 +311,9 @@ export default function CreateContainer(props: Props) {
                     <Switch
                       id="confidentiality"
                       defaultChecked={defaultValues?.confidentiality}
-                      onCheckedChange={(checked)=>setValue("confidentiality", checked)}
+                      onCheckedChange={(checked) =>
+                        setValue("confidentiality", checked)
+                      }
                     />
                     <small className="text-muted-foreground">
                       Include a confidentiality clause in the contract

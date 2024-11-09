@@ -1,48 +1,85 @@
+import {
+  LayoutDashboard,
+  Home,
+  Info,
+  ShoppingCart,
+  FileText,
+  Mail,
+  FileQuestion,
+  Gavel,
+  Zap,
+  TruckIcon,
+  Receipt,
+  Award,
+  File,
+  Truck,
+  ClipboardSignature,
+  Users,
+  Building,
+  UserCircle,
+  Boxes,
+  Network,
+  Calendar,
+  Scale,
+  GitMerge,
+  Lock,
+  User,
+  UsersRound,
+  FileSearch,
+} from "lucide-react";
+
 export const StaffAccordions = [
   {
     label: "Dashboard",
+    icon: LayoutDashboard,
     items: [
       {
         label: "Home",
         name: "home",
         href: "/dashboard",
+        icon: Home,
       },
       {
         label: "About",
         name: "about",
         href: "/about",
+        icon: Info,
       },
     ],
   },
   {
     label: "Procurement",
+    icon: ShoppingCart,
     items: [
       {
         label: "Requisitions",
         name: "requisitions",
         href: "/procurement/requisitions",
+        icon: FileText,
       },
       {
         label: "RFQ",
         name: "rfq",
         href: "/procurement/rfq",
+        icon: Mail,
       },
       {
         label: "RFQ Responses",
         name: "rfq_responses",
-        // href: "/procurement/quotations",
         href: "/procurement/rfq/responses",
+        icon: FileQuestion,
       },
       {
         label: "Tender",
         name: "restricted_tender",
         href: "/procurement/tender",
+        icon: Gavel,
       },
-
       {
         label: "Single Sourcing",
         name: "single_sourcing",
         href: "/procurement/single_sourcing?create",
+        icon: Zap,
       },
       {
         label: "Purchase Orders",
@@ -53,21 +90,30 @@ export const StaffAccordions = [
         label: "Invoices",
         name: "invoices",
         href: "/procurement/invoices",
+        icon: Receipt,
       },
       {
-        label: "Contracts Management",
+        label: "Contract Awards",
+        name: "contracts_awards",
+        href: "/procurement/contracts/awards",
+        icon: Award,
+      },
+      {
+        label: "Contract Management",
         name: "contracts",
-        href: "/procurement/rfq/contracts",
+        href: "/procurement/contracts/drafts",
       },
     ],
   },
   {
     label: "Suppliers",
+    icon: Truck,
     items: [
       {
         label: "Registration",
         name: "vendor_registration",
         href: "/suppliers/registrations",
+        icon: ClipboardSignature,
       },
       {
         label: "Certificates",
@@ -78,68 +124,79 @@ export const StaffAccordions = [
         label: "Contact Persons",
         name: "contact_person",
         href: "/suppliers/contact-persons",
+        icon: Users,
       },
       {
         label: "All Vendors",
         name: "quotation_sent",
         href: "/suppliers",
+        icon: Truck,
       },
     ],
   },
-
   {
     label: "My Organization",
+    icon: Building,
     items: [
       {
         label: "Staffs",
         name: "staffs",
         href: "/organization/staffs",
+        icon: UserCircle,
       },
       {
         label: "Units",
         name: "units",
         href: "/organization/units",
+        icon: Boxes,
       },
       {
         label: "Departments",
         name: "departments",
         href: "/organization/departments",
+        icon: Network,
       },
       {
         label: "Procurement Plan",
         name: "procurement_plan",
         href: "/organization/plans",
+        icon: Calendar,
       },
       {
         label: "Procurement Thresholds",
         name: "procurement_thresholds",
         href: "/organization/plans/thresholds",
+        icon: Scale,
       },
       {
         label: "Approval Workflows",
         name: "approval_workflows",
         href: "/organization/workflows",
+        icon: GitMerge,
       },
     ],
   },
-
   {
     label: "Auth Management",
+    icon: Lock,
     items: [
       {
         label: "Users",
         name: "users",
         href: "/auth-manager/users",
+        icon: User,
       },
       {
         label: "Groups",
         name: "groups",
         href: "/auth-manager/groups",
+        icon: UsersRound,
       },
       {
         label: "Logs",
         name: "logs",
         href: "/auth-manager/logs",
+        icon: FileSearch,
       },
     ],
   },

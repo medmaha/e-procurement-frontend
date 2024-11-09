@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { lazy, useState } from "react";
 import { ChevronDown, ChevronUp, PlusIcon, Search } from "lucide-react";
 import { Input } from "@/Components/ui/input";
 import { Button } from "@/Components/ui/button";
@@ -17,13 +17,20 @@ type Props = {
   permissions: AuthPerm;
 };
 
+const ComposeContractLazy = lazy(
+  () => import("../drafts/create/ComposeContract")
+);
+
 export default function PageContainer({ data, permissions, user }: Props) {
-  const [expandedAward, setExpandedAward] = useState<ID | null>(null);
-  const [selectedAward, setSelectedAward] = useState<ContractAward>();
+  const [expandedAward, setExpandedAward] = useState<ID>();
+  const [selectedAward, setSelectedAward] = useState({
+    type: undefined as undefined | "approve" | "view" | "draft",
+    data: undefined as undefined | ContractAward,
+  });
   const [searchTerm, setSearchTerm] = useState("");
 
   const toggleExpand = (id: ID) => {
-    setExpandedAward(expandedAward === id ? null : id);
+    setExpandedAward(expandedAward === id ? undefined : id);
   };
 
   const filteredAwards = data.filter(
@@ -36,18 +43,29 @@ export default function PageContainer({ data, permissions, user }: Props) {
 
   return (
     <>
-      {selectedAward && (
+      {selectedAward?.data && selectedAward?.type === "approve" && (
         <ContractAwardApproval
           user={user}
           onClose={() => {
-            setSelectedAward(undefined);
-            setExpandedAward(null);
+            setSelectedAward({} as any);
+            setExpandedAward(undefined);
           }}
-          award={selectedAward}
+          award={selectedAward.data}
           autoOpen={true}
         />
       )}
-      <div className="container mx-auto">
+      {selectedAward?.data && selectedAward?.type === "draft" && (
+        <ComposeContractLazy
+          user={user}
+          onDialogClose={() => {
+            setSelectedAward({} as any);
+            setExpandedAward(undefined);
+          }}
+          award_id={selectedAward.data.id}
+          vendor={selectedAward.data.quotation.vendor}
+        />
+      )}
+      <div className="lg:container mx-auto">
         <div className="mb-4 relative">
           <Input
             type="text"
@@ -67,7 +85,7 @@ export default function PageContainer({ data, permissions, user }: Props) {
           {filteredAwards.map((award) => (
             <li key={award.id} className="border rounded-lg shadow-sm">
               <div
-                className="flex items-center justify-between p-4 cursor-pointer"
+                className="flex items-center justify-between flex-wrap gap-4 p-4 cursor-pointer"
                 onClick={() => toggleExpand(award.id)}
               >
                 <div className="flex items-center space-x-4">
@@ -94,25 +112,33 @@ export default function PageContainer({ data, permissions, user }: Props) {
                     {format(new Date(award.created_date), "PPp")}
                   </p>
                 </div>
-                <div className="flex items-center space-x-4">
-                  {award.status === "PENDING" && permissions.approve && (
-                    <Button
-                      size={"sm"}
-                      variant={
-                        expandedAward === award.id ? "outline" : "default"
-                      }
-                    >
-                      Approve
-                    </Button>
-                  )}
-                  {!award.contract && permissions.create && (
-                    <Button
-                      size={"sm"}
-                    >
-                      <PlusIcon size={16} />
-                      Draft Contract
-                    </Button>
-                  )}
+                <div className="inline-flex items-center justify-between w-full lg:w-max space-x-4">
+                  <div className="">
+                    {award.status === "PENDING" && permissions.approve && (
+                      <Button
+                        size={"sm"}
+                        variant={
+                          expandedAward === award.id ? "outline" : "default"
+                        }
+                      >
+                        Approve
+                      </Button>
+                    )}
+                    {!award.contract && permissions.create && (
+                      <Button
+                        size={"sm"}
+                        onClick={() =>
+                          setSelectedAward({
+                            type: "draft",
+                            data: award,
+                          })
+                        }
+                      >
+                        <PlusIcon size={16} />
+                        Draft Contract
+                      </Button>
+                    )}
+                  </div>
                   <span
                     className={`px-2 py-1 rounded-full text-xs font-semibold ${
                       award.status === "AWARDED"
@@ -249,7 +275,12 @@ export default function PageContainer({ data, permissions, user }: Props) {
                           <Button
                             autoFocus
                             size={"sm"}
-                            onClick={() => setSelectedAward(award)}
+                            onClick={() =>
+                              setSelectedAward({
+                                type: "approve",
+                                data: award,
+                              })
+                            }
                           >
                             Approve
                           </Button>

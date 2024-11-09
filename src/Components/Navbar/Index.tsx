@@ -6,16 +6,21 @@ import UserAccount from "./UserAccount";
 import HistorySwitcher from "./HistorySwitcher";
 import Tooltip from "../ui/tooltip";
 import NavLinks from "./NavLinks";
+import SidebarCloser from "../AppSideBar/SidebarCloser";
+import { SidebarTrigger } from "../ui/sidebar";
 
 export default function TopNavigationBar({ session, theme }: any) {
   return (
     <nav className="flex justify-between items-center gap-4 text-card-foreground flex-1">
-      <div className="hidden md:block">
-        <HistorySwitcher user={session} />
+      <div className="">
+        <div className="inline-block md:hidden">
+          <SidebarTrigger />
+        </div>
       </div>
 
-      <NavLinks />
-      {/* {session && <SearchBar user={session} />} */}
+      <div className="">
+        <HistorySwitcher user={session} />
+      </div>
 
       <div className="flex items-center gap-4">
         <ul className="md:flex items-center gap-6 hidden">

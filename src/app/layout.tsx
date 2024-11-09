@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 import APP_COMPANY from "@/APP_COMPANY";
 import TopNavigationBar from "@/Components/Navbar/Index";
 import ClientLayout from "../Components/ClientLayout";
-import { SidebarProvider, SidebarTrigger } from "@/Components/ui/sidebar";
+import { SidebarProvider } from "@/Components/ui/sidebar";
 
 import type { Metadata } from "next";
 import { validateAndDecodeJWT } from "@/lib/auth/generics";
@@ -14,6 +14,7 @@ import {
 } from "@/lib/auth/constants";
 import { AppSidebar } from "@/Components/AppSideBar/Index";
 import { Toaster } from "@/Components/ui/sonner";
+import SidebarCloser from "@/Components/AppSideBar/SidebarCloser";
 const inter = Poppins({ weight: "400", preload: true, subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -24,6 +25,9 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: any) {
   const session = getAuthUser();
   const theme = cookies().get("theme")?.value ?? "light";
+
+  const defaultOpen = cookies().get("sidebar:state")?.value === "true";
+
   return (
     <html lang="en" className={theme + " transition-[background-color,color]"}>
       <body
@@ -32,31 +36,14 @@ export default function RootLayout({ children }: any) {
         {/* <body className={"transition-[background-color,color]"}> */}
         <ClientLayout theme={theme} session={session}>
           {session ? (
-            <div className={`grid`}>
-              {/* {session && (
-                <Suspense fallback={<div className="border-r h-full"></div>}>
-                  <AsideNavigation user={session} />
-                </Suspense>
-              )} */}
-              <SidebarProvider>
-                <AppSidebar user={session} />
-                <Main>
-                  <Header session={session}>
-                    <SidebarTrigger />
-                  </Header>
-                  {children}
-                </Main>
-              </SidebarProvider>
-            </div>
+            <SidebarProvider defaultOpen={defaultOpen}>
+              <AppSidebar user={session} />
+              <Main session={session}>{children}</Main>
+            </SidebarProvider>
           ) : (
-            <div className="grid min-h-[100svh]">
-              <Main>
-                {/* <SidebarTrigger /> */}
-                <Header />
-                {children}
-              </Main>
-              <Footer />
-            </div>
+            <>
+              <Main session={session}>{children}</Main>
+            </>
           )}
         </ClientLayout>
         <Toaster />
@@ -65,28 +52,32 @@ export default function RootLayout({ children }: any) {
   );
 }
 
-function Header({ session, children }: any) {
+function Header({ session }: any) {
   const theme = cookies().get("theme")?.value ?? "light";
   return (
     <header className="flex gap-4 h-[60px] md:px-6 px-2 sm:px-4 items-center sticky border-b top-0 z-10 bg-card bg-opacity-50 backdrop-blur-[3px]">
-      {children}
+      <SidebarCloser />
       <TopNavigationBar session={session} theme={theme} />
     </header>
   );
 }
 
-function Main({ children }: any) {
+function Main({ session, children }: any) {
   return (
-    <main className="bg-background text-foreground relative w-full block overflow-x-hidden">
-      {children}
-    </main>
+    <div className="w-full">
+      <Header session={session} />
+      <main className="bg-background text-foreground relative min-h-[calc(100svh-60px-48px)] w-full block overflow-x-hidden">
+        {children}
+      </main>
+      <Footer />
+    </div>
   );
 }
 
 function Footer() {
   const today = new Date();
   return (
-    <footer className="p-4 mt-4 sm:px-6 bg-accent text-accent-foreground">
+    <footer className="p-4 sm:px-6 bg-accent text-accent-foreground">
       <div className="flex justify-between gap-6 flex-wrap items-center">
         <p className="text-xs text-muted-foreground flex-1 text-center">
           Copyright &copy;{" " + today.getFullYear() + " "}
