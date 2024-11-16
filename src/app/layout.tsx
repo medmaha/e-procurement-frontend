@@ -35,16 +35,16 @@ export default function RootLayout({ children }: any) {
       >
         {/* <body className={"transition-[background-color,color]"}> */}
         <ClientLayout theme={theme} session={session}>
-            <SidebarProvider defaultOpen={defaultOpen}>
-              {session ? (
-                  <AppSidebar user={session} />
-                  <Main session={session}>{children}</Main>
-              ) : (
-                <>
-                  <Main session={session}>{children}</Main>
-                </>
-              )}
-            </SidebarProvider>
+            {session ? (
+              <SidebarProvider defaultOpen={defaultOpen}>
+                <AppSidebar user={session} />
+                <Main session={session}>{children}</Main>
+              </SidebarProvider>
+            ) : (
+             <SidebarProvider defaultOpen={defaultOpen}>
+                <Main session={session}>{children}</Main>
+             </SidebarProvider>
+            )}
         </ClientLayout>
         <Toaster />
       </body>
@@ -56,7 +56,9 @@ function Header({ session }: any) {
   const theme = cookies().get("theme")?.value ?? "light";
   return (
     <header className="flex gap-4 h-[60px] md:px-6 px-2 sm:px-4 items-center sticky border-b top-0 z-10 bg-card bg-opacity-50 backdrop-blur-[3px]">
-      <SidebarCloser />
+      {session && 
+        <SidebarCloser />
+      }
       <TopNavigationBar session={session} theme={theme} />
     </header>
   );
