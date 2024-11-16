@@ -35,16 +35,16 @@ export default function RootLayout({ children }: any) {
       >
         {/* <body className={"transition-[background-color,color]"}> */}
         <ClientLayout theme={theme} session={session}>
-          {session ? (
             <SidebarProvider defaultOpen={defaultOpen}>
-              <AppSidebar user={session} />
-              <Main session={session}>{children}</Main>
+              {session ? (
+                  <AppSidebar user={session} />
+                  <Main session={session}>{children}</Main>
+              ) : (
+                <>
+                  <Main session={session}>{children}</Main>
+                </>
+              )}
             </SidebarProvider>
-          ) : (
-            <>
-              <Main session={session}>{children}</Main>
-            </>
-          )}
         </ClientLayout>
         <Toaster />
       </body>
